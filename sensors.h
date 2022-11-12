@@ -6,6 +6,9 @@
 #include <QDBusInterface>
 #include <QTimer>
 
+#include <QtSensors/QStepCounterSensor>
+#include <QtSensors/QHrmSensor>
+
 class Logger : public QObject
 {
     Q_OBJECT
@@ -17,6 +20,10 @@ private slots:
     void recordHeartrate();
     void recordGPS();
     void recordStepcounter();
+
+    void setupRecordHeartrate();
+    void setupRecordGPS();
+    void setupRecordStepcounter();
 private:
     QDateTime hrmLastTime;
     QDateTime stepsLastTime;
@@ -27,6 +34,8 @@ private:
     QTimer *hrmTimer;
     QTimer *gpsTimer;
     QTimer *stepsTimer;
+    QHrmSensor *heartrateSensor ;
+    QStepCounterSensor *stepcounterSensor;
 };
 
 #endif // LOGGER_H

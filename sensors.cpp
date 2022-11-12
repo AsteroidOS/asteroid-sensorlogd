@@ -17,9 +17,13 @@ Logger::Logger(QObject *parent)  :
     QSettings settings;
     if (true) { //add check for HRM
         hrmInterval = settings.value("hrmInterval",60000).toInt();
+
+        heartrateSensor = new QHrmSensor(this);
+        connect(heartrateSensor,SIGNAL(readingChanged()),this,SLOT(recordHeartrate()));
+
         qDebug() << "heartrate sensor is enabled. interval is (ms) " << hrmInterval;
         hrmTimer = new QTimer(this);
-        connect(hrmTimer,SIGNAL(timeout()),this,SLOT(recordHeartrate()));
+        connect(hrmTimer,SIGNAL(timeout()),this,SLOT(setupRecordHeartrate()));
         hrmTimer->setSingleShot(true);
         hrmTimer->start(hrmInterval);
         hrmLastTime = QDateTime::currentDateTime();
@@ -70,27 +74,32 @@ void Logger::displayOn(QString displayState) {
     }
 }
 
-void Logger::recordHeartrate() {
+void Logger::setupRecordHeartrate() {
     qDebug() << "heartrate interval recording";
     hrmTimer->start(hrmInterval);
-    QHrmSensor* heartrateSensor = new QHrmSensor(this);
+    heartrateSensor->start();
+}
+
+void Logger::recordHeartrate() {
+    int bpm = heartrateSensor->reading()->bpm();
+    qDebug() << QDateTime::currentDateTime().toString("hh:mm:ss") << " : " << bpm << heartrateSensor->status() << heartrateSensor->isActive();
+    if ((bpm == 0) || (heartrateSensor->status() < 3)) {
+        return;
+    }
     QFile file("out.txt");
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         qDebug() << "failed to open file";
         return;
     }
-    heartrateSensor->start();
     QTextStream out(&file);
-    while(heartrateSensor->reading()->bpm() == 0) {
-        qDebug() << "waiting for reading, currently " << heartrateSensor->reading()->bpm() << heartrateSensor->status() << heartrateSensor->isActive();
-    }
-    qDebug() << QDateTime::currentDateTime().toString("hh:mm:ss") << " : " << heartrateSensor->reading()->bpm() << heartrateSensor->status() << heartrateSensor->isActive();
-    out << QDateTime::currentSecsSinceEpoch() << " : " << heartrateSensor->reading(); //reading() like this doesn't do anything useful. We need to wait for sensor to initialise and feed us back a reading
+    while(!out.atEnd()){}
+    out << QDateTime::currentSecsSinceEpoch() << " : " << bpm;
+    qDebug() << "wrote to file";
     heartrateSensor->stop();
     file.close();
 }
 
-void Logger::recordGPS() {
+void Logger::setupRecordGPS() {
     QTimer::singleShot(hrmInterval, this, SLOT(recordHeartrate()));
     QHrmSensor* heartrateSensor = new QHrmSensor(this); //ok GPS doesn't work like this, this gonna need a custom solution. QtLocation to the rescue, or something :/
     QFile file("out.txt");
@@ -108,10 +117,12 @@ void Logger::recordGPS() {
     //save to file
 }
 
-void Logger::recordStepcounter() {
+void Logger::recordGPS() {
+}
+
+void Logger::setupRecordStepcounter() {
     qDebug() << "stepcounter interval recording";
     hrmTimer->start(hrmInterval);
-    QStepCounterSensor* stepcounterSensor = new QStepCounterSensor(this);
     QFile file("out.txt");
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         qDebug() << "failed to open file";
@@ -126,4 +137,7 @@ void Logger::recordStepcounter() {
     out << QDateTime::currentSecsSinceEpoch() << " : " << stepcounterSensor->reading(); //reading() like this doesn't do anything useful. We need to wait for sensor to initialise and feed us back a reading
     stepcounterSensor->stop();
     file.close();
+}
+
+void Logger::recordStepcounter() {
 }
