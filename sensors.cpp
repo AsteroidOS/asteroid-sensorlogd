@@ -81,19 +81,20 @@ void Logger::setupRecordHeartrate() {
 }
 
 void Logger::recordHeartrate() {
+    qDebug() << "bpm update received";
     int bpm = heartrateSensor->reading()->bpm();
     qDebug() << QDateTime::currentDateTime().toString("hh:mm:ss") << " : " << bpm << heartrateSensor->status() << heartrateSensor->isActive();
     if ((bpm == 0) || (heartrateSensor->status() < 3)) {
         return;
     }
     QFile file("out.txt");
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
         qDebug() << "failed to open file";
         return;
     }
+    file.seek(file.size());
     QTextStream out(&file);
-    while(!out.atEnd()){}
-    out << QDateTime::currentSecsSinceEpoch() << " : " << bpm;
+    out << QDateTime::currentSecsSinceEpoch() << " : " << bpm << "\n";
     qDebug() << "wrote to file";
     heartrateSensor->stop();
     file.close();
