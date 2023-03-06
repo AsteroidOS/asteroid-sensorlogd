@@ -13,8 +13,12 @@ find_package(Qt5 COMPONENTS Core DBus Qml Positioning Sensors REQUIRED)
 
 add_executable(healthd
     healthd.cpp
-    sensors.h
-    sensors.cpp
+    logger.cpp
+    logger.h
+    sensorPlugins/stepCounter.cpp
+    sensorPlugins/stepCounter.h
+    sensorPlugins/heartrateSensor.cpp
+    sensorPlugins/heartrateSensor.h
 )
 set_target_properties(healthd PROPERTIES AUTOMOC ON)
 #add_compile_definitions(Q_DECLARE_PRIVATE_SUPPORTS_UNIQUE_PTR=${Q_DECLARE_PRIVATE_SUPPORTS_UNIQUE_PTR})

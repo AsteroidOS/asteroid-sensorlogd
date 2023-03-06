@@ -1,7 +1,7 @@
 #include <QCoreApplication>
 #include <QDBusConnection>
 #include <QDebug>
-#include "sensors.h"
+#include "logger.h"
 
 int main(int argc, char **argv)
 {
