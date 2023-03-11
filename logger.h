@@ -27,5 +27,6 @@ private:
     StepCounterPlugin *m_stepCounter;
 };
 void writeReadingToFile(QString data, QString filename);
+QString getLineFromFile(int lineNumber, QString filename);
 
 #endif // LOGGER_H

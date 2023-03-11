@@ -63,3 +63,22 @@ void writeReadingToFile(QString data, QString filename) {
     out << data;
     file.close();
 }
+
+QString getLineFromFile(int lineNumber, QString filename) {
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
+        qDebug() << "failed to open file";
+        return "0 : 0";
+    }
+    QTextStream inStream(&file);
+    QString line;
+    int i;
+    while(!inStream.atEnd() & (i < lineNumber | i < 0))
+    {
+        line = inStream.readLine();
+        qDebug() << line;
+        i++;
+    }
+    file.close();
+    return line;
+}

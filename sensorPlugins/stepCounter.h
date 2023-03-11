@@ -25,6 +25,9 @@ private:
     int interval;
     QTimer *recordIntervalTimer;
     QStepCounterSensor *stepcounterSensor;
+    int stepsOffset; //this is subtracted from the raw sensor value to compensate for daily step resets and boot offsets.
+
+    const QString fileName = "stepsOut.txt";
 };
 
 #endif // STEPCOUNTER_H
