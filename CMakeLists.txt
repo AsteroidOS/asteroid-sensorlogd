@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10.0)
-project(healthd
+project(sensorlogd
     VERSION 1.0.0
-    DESCRIPTION "A health tracker daemon for AsteroidOS"
+    DESCRIPTION "A sensor logger daemon for AsteroidOS oriented towards health tracking"
 )
 
 find_package(ECM REQUIRED NO_MODULE)
@@ -12,7 +12,7 @@ find_package(Qt5 COMPONENTS Core DBus Qml Positioning Sensors REQUIRED)
 
 
 add_executable(healthd
-    healthd.cpp
+    sensorlogd.cpp
     logger.cpp
     logger.h
     sensorPlugins/stepCounter.cpp
