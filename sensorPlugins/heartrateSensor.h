@@ -28,6 +28,8 @@ private:
     int interval;
     QTimer *recordIntervalTimer;
     QHrmSensor *hrmSensor;
+
+    const QString sensorPathPrefix = "heartrateMonitor";
 };
 
 #endif // HEARTRATESENSOR_H

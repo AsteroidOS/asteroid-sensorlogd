@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QTextStream>
+#include <QStandardPaths>
 #include <QTimer>
 #include <QDebug>
 
@@ -52,33 +53,42 @@ void Logger::displayOn(QString displayState) {
     }
 }
 
-void writeReadingToFile(QString data, QString filename) {
-    QFile file(filename);
+void fileAddRecord(QString sensorPrefix, QString logdata, QDateTime recordTime) { //adds a record to today's log file for the given sensor
+    qDebug() << fileNameForDate(recordTime.date(), sensorPrefix);
+    QFile file(fileNameForDate(recordTime.date(), sensorPrefix));
     if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
         qDebug() << "failed to open file";
         return;
     }
     file.seek(file.size());
     QTextStream out(&file);
-    out << data;
+    out << QString::number(recordTime.currentSecsSinceEpoch()) + ":" + logdata + "\n";
     file.close();
 }
+bool dayFileExists(QString sensorPrefix, QDateTime dateTime) {
+    return QFile::exists(fileNameForDate(dateTime.date(), sensorPrefix));
+}
 
-QString getLineFromFile(int lineNumber, QString filename) {
-    QFile file(filename);
+QStringList fileGetPrevRecord(QString sensorPrefix, QDateTime recordTime) {
+    qDebug() << fileNameForDate(recordTime.date(), sensorPrefix);
+    QFile file(fileNameForDate(recordTime.date(), sensorPrefix));
     if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
         qDebug() << "failed to open file";
-        return "0 : 0";
+        return {0,0};
     }
     QTextStream inStream(&file);
     QString line;
     int i;
-    while(!inStream.atEnd() & (i < lineNumber | i < 0))
+    while(!inStream.atEnd())
     {
         line = inStream.readLine();
         qDebug() << line;
         i++;
     }
     file.close();
-    return line;
+    return line.split(":");
+}
+
+QString fileNameForDate(QDate date, QString prefix) {
+    return QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/asteroid-healthloggerd/" + prefix + "/" + date.toString("yyyy-MM-dd.log");
 }

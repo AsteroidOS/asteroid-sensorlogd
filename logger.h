@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QDateTime>
+#include <QDate>
 #include <QDBusInterface>
 #include <QTimer>
 #include <QString>
@@ -16,6 +17,7 @@ class Logger : public QObject
 public:
     explicit Logger(QObject *parent = 0);
     virtual ~Logger() {};
+
 private slots:
     void displayOn(QString displayState);
 
@@ -25,8 +27,11 @@ private:
     HeartrateSensorPlugin *m_heartrateSensor;
     bool stepCounterEnabled = true;
     StepCounterPlugin *m_stepCounter;
+
 };
-void writeReadingToFile(QString data, QString filename);
-QString getLineFromFile(int lineNumber, QString filename);
+    void fileAddRecord(QString sensorPrefix, QString logdata, QDateTime recordTime = QDateTime::currentDateTime()); //adds a record to today's log file for the given sensor
+    bool dayFileExists(QString sensorPrefix, QDateTime date = QDateTime::currentDateTime()); //check if today has a log file for the given sensor
+    QStringList fileGetPrevRecord(QString sensorPrefix, QDateTime recordTime = QDateTime::currentDateTime()); //works backwards to find the last record in today's file before the given time - returns nothing if no file is found.
+    QString fileNameForDate(QDate date, QString prefix);
 
 #endif // LOGGER_H

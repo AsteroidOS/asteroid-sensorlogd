@@ -20,17 +20,21 @@ StepCounterPlugin::StepCounterPlugin(QObject *parent, int initInterval)  :
     connect(recordIntervalTimer,SIGNAL(timeout()),this,SLOT(triggerRecording()));
     recordIntervalTimer->setSingleShot(true);
     recordIntervalTimer->start(interval);
-    QStringList lastLineData = getLineFromFile(-1,fileName).split(" : ");
-    lastRecordTime = QDateTime::fromSecsSinceEpoch(lastLineData[0].toInt());
+
     QDateTime currDateTime = QDateTime::currentDateTime();
-    qDebug() << "last record time: " << lastLineData[0] << " last record steps: " << lastLineData[1];
-    if (lastRecordTime.date() < currDateTime.date()) { //if it's a new day, we 'reset' the counter. this is crude - we should really check for a boot here, since certain machines have capability of counting steps when powered down.
+
+    if (dayFileExists(sensorPathPrefix)) {
+        QStringList lastLineData = fileGetPrevRecord(sensorPathPrefix);
+        lastRecordTime = QDateTime::fromSecsSinceEpoch(lastLineData[0].toInt());
+        if (stepcounterSensor->reading()->steps() == 0) {
+            stepsOffset = -(lastLineData[1].toInt());
+        } else {
+
+        }
+    } else {
+        //if it's a new day, we 'reset' the counter. this is crude - we should really check for a boot here, since certain machines have capability of counting steps when powered down.
         stepsOffset = stepcounterSensor->reading()->steps();
-    } else if (stepcounterSensor->reading()->steps() == 0) { //otherwise, keep counting from the last point. though we also need to check if we're running on the same boot as the previous recording, otherwise we may go into negatives.
-        stepsOffset = -(lastLineData[1].toInt());
     }
-    //and here we need to load in an appropriate offset. but this is a difficult topic. it would be nice really useful to figure out whether the daemon is running the first time for a given boot, in order to figure out whether we need to offset the sensor or take the first value as an actual data point. this gets even more messed up by catfish and other watches with their own rogue sensor management systems... maybe we could do the 'freshness' detection by creating a file in /tmp
-    //alternatively, we just assume that steps should only be counted when the daemon is running. hence, we set the offset to [current sensor reading] - [last reading in today's log] and
 }
 
 void StepCounterPlugin::timeUpdate() {
@@ -53,5 +57,5 @@ void StepCounterPlugin::triggerRecording() {
     int steps = stepcounterSensor->reading()->steps();
     qDebug() << QDateTime::currentDateTime().toString("hh:mm:ss") << " : " << steps << stepcounterSensor->isActive();
     //we probably ought to do some error checking here
-    writeReadingToFile(QString::number(QDateTime::currentSecsSinceEpoch()) + " : " + QString::number(steps - stepsOffset) + "\n", fileName);
+    fileAddRecord(sensorPathPrefix,QString::number(steps - stepsOffset));
 }

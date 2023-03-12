@@ -27,7 +27,7 @@ private:
     QStepCounterSensor *stepcounterSensor;
     int stepsOffset; //this is subtracted from the raw sensor value to compensate for daily step resets and boot offsets.
 
-    const QString fileName = "stepsOut.txt";
+    const QString sensorPathPrefix = "stepCounter";
 };
 
 #endif // STEPCOUNTER_H

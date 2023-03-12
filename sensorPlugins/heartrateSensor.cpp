@@ -48,6 +48,6 @@ void HeartrateSensorPlugin::finishRecording() {
         qDebug() << "hrm sensor accuracy insufficient. waiting.";
         return;
     }
-    writeReadingToFile(QString::number(QDateTime::currentSecsSinceEpoch()) + " : " + QString::number(bpm) + "\n", "hrmOut.txt");
+    fileAddRecord(sensorPathPrefix,QString::number(bpm));
     hrmSensor->stop();
 }
