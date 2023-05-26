@@ -19,6 +19,7 @@ class StepsDataLoader : public QObject
 
 public:
     explicit StepsDataLoader();
+    Q_INVOKABLE int getDataForDate(QDate date);
     Q_INVOKABLE int getTodayData();
 };
 QString fileNameForDate(QDate date, QString prefix);
