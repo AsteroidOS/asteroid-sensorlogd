@@ -27,12 +27,12 @@ int StepsDataLoader::getTodayData() {
 int StepsDataLoader::getDataForDate(QDate date) { // This is obvious garbage. This should really be abstracted and cached, so that every page doesn't have to reload the file from scratch.
 // The intention is to also add graph functionality at some point. The graph will be simplifying the data before loading it in - it would be worth caching the simplified data when it comes to that as well.
     QFile file(fileNameForDate(date, "stepCounter"));
-    if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "failed to open file";
         return 0;
     }
     QTextStream inStream(&file);
-    QString line;
+    QString line = "0";
     int i;
     while(!inStream.atEnd())
     {
