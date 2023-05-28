@@ -14,6 +14,7 @@
 #include <QDBusConnection>
 #include <QDateTime>
 #include <QFile>
+#include <QDir>
 #include <QTextStream>
 #include <QStandardPaths>
 #include <QTimer>
@@ -116,3 +117,8 @@ QStringList fileGetPrevRecord(QString sensorPrefix, QDateTime recordTime) {
 QString fileNameForDate(QDate date, QString prefix) {
     return QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/asteroid-healthloggerd/" + prefix + "/" + date.toString("yyyy-MM-dd.log");
 }
+
+void setupFilePath(QString sensorPrefix) {
+    QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/asteroid-healthloggerd/" + sensorPrefix);
+}
+

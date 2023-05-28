@@ -26,6 +26,8 @@ HeartrateSensorPlugin::HeartrateSensorPlugin(QObject *parent, int initInterval) 
     hrmSensor = new QHrmSensor(this);
     connect(hrmSensor,SIGNAL(readingChanged()),this,SLOT(finishRecording()));
 
+    setupFilePath(sensorPathPrefix);
+
     qDebug() << "heartrate sensor is enabled. interval is (ms) " << interval;
     recordIntervalTimer = new QTimer(this);
     connect(recordIntervalTimer,SIGNAL(timeout()),this,SLOT(triggerRecording()));

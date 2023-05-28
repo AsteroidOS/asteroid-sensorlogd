@@ -33,6 +33,8 @@ StepCounterPlugin::StepCounterPlugin(QObject *parent, int initInterval)  :
 
     QDateTime currDateTime = QDateTime::currentDateTime();
 
+    setupFilePath(sensorPathPrefix);
+
     if (dayFileExists(sensorPathPrefix)) {
         QStringList lastLineData = fileGetPrevRecord(sensorPathPrefix);
         lastRecordTime = QDateTime::fromSecsSinceEpoch(lastLineData[0].toInt());
