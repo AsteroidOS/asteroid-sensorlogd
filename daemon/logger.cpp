@@ -27,16 +27,19 @@
 Logger::Logger(QObject *parent)  :
     QObject(parent){
     m_iface = new QDBusInterface("com.nokia.mce","/com/nokia/mce/signal", "com.nokia.mce.signal", QDBusConnection::systemBus());
-    QSettings settings;
+    settings = new QSettings;
+
+    heartrateSensorEnabled = this->settings->value("heartrateSensor/enabled",true).toBool();
+    stepCounterEnabled = this->settings->value("stepCounter/enabled",true).toBool();
 
 //intialise HRM
-    if (heartrateSensorEnabled) { //add check for HRM
-        m_heartrateSensor = new HeartrateSensorPlugin(this,settings.value("stepsInterval",600000).toInt());
+    if (heartrateSensorEnabled) {
+        m_heartrateSensor = new HeartrateSensorPlugin(this,settings->value("heartrateSensor/interval",600000).toInt());
     }
 
 //initialise step counter
-    if (stepCounterEnabled) { //add check for step sensor
-        m_stepCounter = new StepCounterPlugin(this,settings.value("stepsInterval",600000).toInt());
+    if (stepCounterEnabled) {
+        m_stepCounter = new StepCounterPlugin(this,settings->value("stepCounter/interval",600000).toInt());
     }
 
     if(!m_iface->isValid()) {

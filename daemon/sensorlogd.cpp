@@ -24,10 +24,10 @@ int main(int argc, char **argv)
         fprintf(stderr, "Cannot connect to the D-Bus session bus.\n");
         return 2;
     }
-    Logger sensorsLogger;
     QCoreApplication::setOrganizationName("asteroid");
     QCoreApplication::setOrganizationDomain("asteroidos.org");
     QCoreApplication::setApplicationName("healthd");
+    Logger sensorsLogger;
     qDebug() << "healthd started";
     qcoreapp.exec();
     return 0;

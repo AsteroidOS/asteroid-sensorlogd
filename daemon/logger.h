@@ -17,6 +17,7 @@
 #include <QDBusInterface>
 #include <QTimer>
 #include <QString>
+#include <QSettings>
 
 #include "sensorPlugins/stepCounter.h"
 #include "sensorPlugins/heartrateSensor.h"
@@ -27,16 +28,16 @@ class Logger : public QObject
 public:
     explicit Logger(QObject *parent = 0);
     virtual ~Logger() {};
-
 private slots:
     void displayOn(QString displayState);
 
 private:
     QDBusInterface *m_iface;
-    bool heartrateSensorEnabled = true;
+    bool heartrateSensorEnabled = false;
     HeartrateSensorPlugin *m_heartrateSensor;
-    bool stepCounterEnabled = true;
+    bool stepCounterEnabled = false;
     StepCounterPlugin *m_stepCounter;
+    QSettings *settings;
 
 };
     void fileAddRecord(QString sensorPrefix, QString logdata, QDateTime recordTime = QDateTime::currentDateTime()); //adds a record to today's log file for the given sensor
