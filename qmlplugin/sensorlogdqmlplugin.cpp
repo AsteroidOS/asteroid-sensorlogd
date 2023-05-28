@@ -12,6 +12,7 @@
 #include "sensorlogdqmlplugin.h"
 #include <QtQml>
 #include "stepsDataLoader.h"
+#include "loggerSettings.h"
 
 LogdPlugin::LogdPlugin(QObject *parent) : QQmlExtensionPlugin(parent)
 {
@@ -21,5 +22,6 @@ void LogdPlugin::registerTypes(const char *uri)
 {
     Q_ASSERT(uri == QLatin1String("org.asteroid.sensorlogd"));
     qmlRegisterType<StepsDataLoader>(uri, 1, 0, "StepsDataLoader");
+    qmlRegisterType<LoggerSettings>(uri, 1, 0, "LoggerSettings");
 }
 

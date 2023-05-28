@@ -4,10 +4,12 @@ add_library(
     sensorlogdqmlplugin.h
     stepsDataLoader.cpp
     stepsDataLoader.h
+    loggerSettings.cpp
+    loggerSettings.h
 )
 
 target_link_libraries(sensorlogdqmlplugin
-	Qt5::Qml
+	Qt5::Qml Qt5::DBus
 )
 
 install(TARGETS sensorlogdqmlplugin
