@@ -12,6 +12,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDate>
+#include <QSettings>
 #include <QStandardPaths>
 
 #include "stepsDataLoader.h"
@@ -45,5 +46,6 @@ int StepsDataLoader::getDataForDate(QDate date) { // This is obvious garbage. Th
 }
 
 QString fileNameForDate(QDate date, QString prefix) {
-    return QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/asteroid-healthloggerd/" + prefix + "/" + date.toString("yyyy-MM-dd.log");
+    QSettings settings("asteroid","sensorlogd"); //this should be moved out of here at some point TODO
+    return settings.value("loggerRootPath",QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.asteroid-sensorlogd/").toString() + prefix + "/" + date.toString("yyyy-MM-dd.log");
 }

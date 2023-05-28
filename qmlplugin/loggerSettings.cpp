@@ -9,7 +9,6 @@
  */
 
 #include <QDebug>
-#include <QStandardPaths>
 
 #include "loggerSettings.h"
 

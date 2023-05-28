@@ -16,9 +16,9 @@
 #include <QFile>
 #include <QDir>
 #include <QTextStream>
-#include <QStandardPaths>
 #include <QTimer>
 #include <QDebug>
+#include <QStandardPaths>
 
 #include "logger.h"
 
@@ -115,10 +115,12 @@ QStringList fileGetPrevRecord(QString sensorPrefix, QDateTime recordTime) {
 }
 
 QString fileNameForDate(QDate date, QString prefix) {
-    return QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/asteroid-healthloggerd/" + prefix + "/" + date.toString("yyyy-MM-dd.log");
+    QSettings settings("asteroid","sensorlogd"); //this should be moved out of here at some point TODO
+    return settings.value("loggerRootPath",QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.asteroid-sensorlogd/").toString() + prefix + "/" + date.toString("yyyy-MM-dd.log");
 }
 
 void setupFilePath(QString sensorPrefix) {
-    QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/asteroid-healthloggerd/" + sensorPrefix);
+    QSettings settings("asteroid","sensorlogd"); //this should be moved out of here at some point TODO
+    QDir::root().mkpath(settings.value("loggerRootPath",QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.asteroid-sensorlogd/").toString() + sensorPrefix);
 }
 
