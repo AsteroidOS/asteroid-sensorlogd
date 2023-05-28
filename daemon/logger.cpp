@@ -26,6 +26,12 @@
 
 Logger::Logger(QObject *parent)  :
     QObject(parent){
+    if(!QDBusConnection::sessionBus().registerService("org.asteroid.sensorlogd.logger")) qDebug() << "failed to register service";
+    if(!QDBusConnection::sessionBus().registerObject("/org/asteroid/sensorlogd/logger", this, QDBusConnection::ExportAllContents)) qDebug() << "failed to register object";
+    this->setup();
+}
+
+void Logger::setup() {
     m_iface = new QDBusInterface("com.nokia.mce","/com/nokia/mce/signal", "com.nokia.mce.signal", QDBusConnection::systemBus());
     settings = new QSettings;
 
@@ -50,6 +56,10 @@ Logger::Logger(QObject *parent)  :
 	    qDebug() << "healthd connected display_status signal to slot";
     }
     qDebug() << "healthd sensors logger initialised";
+}
+
+void Logger::resetup() {
+    this->setup();
 }
 
 void Logger::displayOn(QString displayState) {

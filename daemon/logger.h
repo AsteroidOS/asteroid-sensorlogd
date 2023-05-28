@@ -18,6 +18,7 @@
 #include <QTimer>
 #include <QString>
 #include <QSettings>
+#include <QDBusAbstractAdaptor>
 
 #include "sensorPlugins/stepCounter.h"
 #include "sensorPlugins/heartrateSensor.h"
@@ -28,6 +29,9 @@ class Logger : public QObject
 public:
     explicit Logger(QObject *parent = 0);
     virtual ~Logger() {};
+public slots:
+    void setup();
+    void resetup();
 private slots:
     void displayOn(QString displayState);
 
