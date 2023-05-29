@@ -6,10 +6,12 @@ add_library(
     stepsDataLoader.h
     loggerSettings.cpp
     loggerSettings.h
+    hrGraph.cpp
+    hrGraph.h
 )
 
 target_link_libraries(sensorlogdqmlplugin
-	Qt5::Qml Qt5::DBus
+	Qt5::Qml Qt5::Quick Qt5::DBus
 )
 
 install(TARGETS sensorlogdqmlplugin
