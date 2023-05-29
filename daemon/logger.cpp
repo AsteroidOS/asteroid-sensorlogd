@@ -78,6 +78,16 @@ void Logger::displayOn(QString displayState) {
     }
 }
 
+void Logger::triggerRecording() {
+    if (heartrateSensorEnabled) {
+        m_heartrateSensor->triggerRecording();
+    }
+
+    if (stepCounterEnabled) {
+        m_stepCounter->triggerRecording();
+    }
+}
+
 void fileAddRecord(QString sensorPrefix, QString logdata, QDateTime recordTime) { //adds a record to today's log file for the given sensor
     qDebug() << fileNameForDate(recordTime.date(), sensorPrefix);
     QFile file(fileNameForDate(recordTime.date(), sensorPrefix));

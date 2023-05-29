@@ -14,11 +14,18 @@
 #include <QDate>
 #include <QSettings>
 #include <QStandardPaths>
+#include <QDBusInterface>
 
 #include "stepsDataLoader.h"
 
 StepsDataLoader::StepsDataLoader() : QObject()
 {
+    m_iface = new QDBusInterface("org.asteroid.sensorlogd.logger","/org/asteroid/sensorlogd/logger","", QDBusConnection::sessionBus(), this);
+    if (!m_iface->isValid()) {
+        qDebug()<<"interface is not valid";
+    } else {
+        qDebug()<<"interface is valid";
+    }
 }
 
 int StepsDataLoader::getTodayData() {
@@ -44,6 +51,11 @@ int StepsDataLoader::getDataForDate(QDate date) { // This is obvious garbage. Th
     file.close();
     return line.split(":")[1].toInt();
 }
+
+void StepsDataLoader::triggerDaemonRecording() {
+    m_iface->call("triggerRecording");
+}
+
 
 QString fileNameForDate(QDate date, QString prefix) {
     QSettings settings("asteroid","sensorlogd"); //this should be moved out of here at some point TODO

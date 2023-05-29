@@ -32,6 +32,7 @@ public:
 public slots:
     void setup();
     void resetup();
+    void triggerRecording();
 private slots:
     void displayOn(QString displayState);
 

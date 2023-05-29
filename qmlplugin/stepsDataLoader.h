@@ -12,6 +12,7 @@
 #define STEPSDATALOADER_H
 
 #include <QObject>
+#include <QDBusInterface>
 
 class StepsDataLoader : public QObject
 {
@@ -21,6 +22,9 @@ public:
     explicit StepsDataLoader();
     Q_INVOKABLE int getDataForDate(QDate date);
     Q_INVOKABLE int getTodayData();
+    Q_INVOKABLE void triggerDaemonRecording();
+private:
+    QDBusInterface *m_iface;
 };
 QString fileNameForDate(QDate date, QString prefix);
 
