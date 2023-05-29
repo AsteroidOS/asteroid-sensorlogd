@@ -39,8 +39,8 @@ class HrGraph : public QQuickPaintedItem
 {
     Q_OBJECT
 
-    // Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    // Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(float lineWidth READ lineWidth WRITE setLineWidth)
+    Q_PROPERTY(QColor lineColor READ lineColor WRITE setLineColor NOTIFY lineColorChanged)
 
     struct HrDatapoint {
         qint64 time;
@@ -53,14 +53,20 @@ public:
 
 signals:
     void loadingDone();
+    void lineColorChanged();
+
+public slots:
+    float lineWidth();
+    void setLineWidth(float width);
+    QColor lineColor();
+    void setLineColor(QColor color);
 
 private:
     void updateBasePixmap();
     void loadGraphData(QDate date = QDate::currentDate());
 
-    float m_size;
-    QString m_name;
-    QColor m_color;
+    float m_lineWidth = 0;
+    QColor m_color = QColor(255,255,255);
     QPixmap m_pixmap;
     QList<HrDatapoint> m_filedata;
     bool m_fileLoadStatus;

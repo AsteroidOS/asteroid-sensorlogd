@@ -59,8 +59,13 @@ void HrGraph::paint(QPainter *painter)
     for(int i = 0; i < j; i++) {
         calculatedTimeSeconds = (m_filedata.at(i).time - minTime)/timeDelta;
         calculatedValue = 1 - (m_filedata.at(i).value - minHrValue)/valueDelta;
-        points[i] = QPointF(1 + calculatedTimeSeconds*(height()-2), 1 + calculatedValue*(width()-2)); //these +2 -1 are here to make sure that the graph fits within the drawn area, as it will be clipped by qt if it doesn't.
+        points[i] = QPointF(m_lineWidth + calculatedTimeSeconds*(height()-2*m_lineWidth), m_lineWidth + calculatedValue*(width()-2*m_lineWidth)); //these +2 -1 are here to make sure that the graph fits within the drawn area, as it will be clipped by qt if it doesn't.
     }
+    QPen pen;
+    pen.setWidthF(m_lineWidth);
+    pen.setColor(m_color);
+    painter->setRenderHints(QPainter::Antialiasing);
+    painter->setPen(pen);
     painter->drawPolyline(points,j);
 }
 
@@ -99,4 +104,22 @@ void HrGraph::loadGraphData(QDate date) {
     maxTime = currTime;
     qDebug() << "heartrate graph file loading done";
     file.close();
+}
+
+void HrGraph::setLineColor(QColor color) {
+    m_color = color;
+    update();
+}
+
+QColor HrGraph::lineColor() {
+    return m_color;
+}
+
+void HrGraph::setLineWidth(float width) {
+    m_lineWidth = width;
+    update();
+}
+
+float HrGraph::lineWidth() {
+    return m_lineWidth;
 }
