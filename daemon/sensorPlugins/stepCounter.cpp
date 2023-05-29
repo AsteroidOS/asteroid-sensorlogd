@@ -41,7 +41,7 @@ StepCounterPlugin::StepCounterPlugin(QObject *parent, int initInterval)  :
         if (stepcounterSensor->reading()->steps() == 0) {
             stepsOffset = -(lastLineData[1].toInt());
         } else {
-
+            stepsOffset = - stepcounterSensor->reading()->steps() + (lastLineData[1].toInt());
         }
     } else {
         //if it's a new day, we 'reset' the counter. this is crude - we should really check for a boot here, since certain machines have capability of counting steps when powered down.
