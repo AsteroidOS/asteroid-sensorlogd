@@ -53,6 +53,9 @@ void HrGraph::paint(QPainter *painter)
     }
     int j = m_filedata.count();
     QPointF points[j];
+    if (!graphRelative) {
+        minHrValue = 0;
+    }
     float valueDelta = maxHrValue - minHrValue;
     float timeDelta = maxTime - minTime;
     float calculatedValue = 0;
@@ -125,4 +128,28 @@ void HrGraph::setLineWidth(float width) {
 
 float HrGraph::lineWidth() {
     return m_lineWidth;
+}
+
+int HrGraph::getMaxHrValue() {
+    return maxHrValue;
+}
+
+int HrGraph::getMinHrValue() {
+    return minHrValue;
+}
+
+QDateTime HrGraph::getMaxTime() {
+    return QDateTime::fromSecsSinceEpoch(maxTime);
+}
+
+QDateTime HrGraph::getMinTime() {
+    return QDateTime::fromSecsSinceEpoch(minTime);
+}
+
+bool HrGraph::relative() {
+    return graphRelative;
+}
+
+void HrGraph::setRelative(bool newRelative) {
+    graphRelative = newRelative;
 }

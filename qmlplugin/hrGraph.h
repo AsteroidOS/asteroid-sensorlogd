@@ -41,6 +41,11 @@ class HrGraph : public QQuickPaintedItem
 
     Q_PROPERTY(float lineWidth READ lineWidth WRITE setLineWidth)
     Q_PROPERTY(QColor lineColor READ lineColor WRITE setLineColor NOTIFY lineColorChanged)
+    Q_PROPERTY(int maxValue READ getMaxHrValue NOTIFY loadingDone)
+    Q_PROPERTY(int minValue READ getMinHrValue NOTIFY loadingDone)
+    Q_PROPERTY(QDateTime maxTime READ getMaxTime NOTIFY loadingDone)
+    Q_PROPERTY(QDateTime minTime READ getMinTime NOTIFY loadingDone)
+    Q_PROPERTY(bool relativeMode READ relative WRITE setRelative)
 
     struct HrDatapoint {
         qint64 time;
@@ -60,6 +65,12 @@ public slots:
     void setLineWidth(float width);
     QColor lineColor();
     void setLineColor(QColor color);
+    int getMaxHrValue();
+    int getMinHrValue();
+    QDateTime getMaxTime();
+    QDateTime getMinTime();
+    bool relative();
+    void setRelative(bool newRelative);
 
 private:
     void updateBasePixmap();
@@ -74,6 +85,7 @@ private:
     int maxHrValue = 0;
     int minTime;
     int maxTime;
+    bool graphRelative;
 };
 
 #endif // ICON_H
