@@ -9,6 +9,8 @@
  */
 
 #include <QDateTime>
+#include <QDate>
+#include <QTime>
 #include <QTimer>
 #include <QtSensors/QStepCounterSensor>
 #include <QDebug>
@@ -61,13 +63,18 @@ void StepCounterPlugin::timeUpdate() {
 }
 
 void StepCounterPlugin::triggerRecording() {
-    if (lastRecordTime.date() < currDateTime.date()) {
-        stepsOffset = stepcounterSensor->reading()->steps(); //this 'resets' the reading whenever the screen is first turned on after midnight. this means that, in the morning, the step count will always be zero, but steps taken just before midnight are still counted and not discarded.
-    }
     qDebug() << "stepcounter interval recording";
-    int steps = stepcounterSensor->reading()->steps();
-    qDebug() << QDateTime::currentDateTime().toString("hh:mm:ss") << " : " << steps << stepcounterSensor->isActive();
-    //we probably ought to do some error checking here
-    fileAddRecord(sensorPathPrefix,QString::number(steps - stepsOffset));
+    if (lastRecordTime.date() < QDate::currentDate()) {
+        int steps = stepcounterSensor->reading()->steps();
+        fileAddRecord(sensorPathPrefix,QString::number(steps - stepsOffset),QDateTime(QDate::currentDate().addDays(-1),QTime(23,59,59))); // this writes the current step count to the last second of the previous day
+        stepcounterSensor->reading()->setSteps(0); // and then we reset the step counter
+        stepsOffset = 0; // and, since the step counter has been reset, there's no need for an offset any more
+        qDebug() << "date change detected; recorded " << steps << " to previous day and reset step counter hw";
+    } else {
+        int steps = stepcounterSensor->reading()->steps();
+        qDebug() << QDateTime::currentDateTime().toString("hh:mm:ss") << " : " << steps << stepcounterSensor->isActive();
+        //we probably ought to do some error checking here
+        fileAddRecord(sensorPathPrefix,QString::number(steps - stepsOffset));
+    }
     lastRecordTime = QDateTime::currentDateTime();
 }
