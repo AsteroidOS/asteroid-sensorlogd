@@ -51,23 +51,23 @@ StepCounterPlugin::StepCounterPlugin(QObject *parent, int initInterval)  :
 
 void StepCounterPlugin::timeUpdate() {
     QDateTime currDateTime = QDateTime::currentDateTime();
-    if (lastRecordTime.date() < currDateTime.date()) {
-        stepsOffset = stepcounterSensor->reading()->steps(); //this 'resets' the reading whenever the screen is first turned on after midnight. this means that, in the morning, the step count will always be zero, but steps taken just before midnight are still counted and not discarded.
-    }
     uint elapsed = currDateTime.toMSecsSinceEpoch() - lastRecordTime.toMSecsSinceEpoch();
     qDebug() << "time until next steps recording" << recordIntervalTimer->remainingTime() << " elapsed = " << elapsed << " lastRecordTime " << lastRecordTime.toMSecsSinceEpoch();
     if (elapsed > interval) { //if too much time has passed, reset the timer and record
         triggerRecording();
-        lastRecordTime = QDateTime::currentDateTime();
     } else { //otherwise, restart the timer and compensate for time spent in suspend
         recordIntervalTimer->start(interval - elapsed);
     }
 }
 
 void StepCounterPlugin::triggerRecording() {
+    if (lastRecordTime.date() < currDateTime.date()) {
+        stepsOffset = stepcounterSensor->reading()->steps(); //this 'resets' the reading whenever the screen is first turned on after midnight. this means that, in the morning, the step count will always be zero, but steps taken just before midnight are still counted and not discarded.
+    }
     qDebug() << "stepcounter interval recording";
     int steps = stepcounterSensor->reading()->steps();
     qDebug() << QDateTime::currentDateTime().toString("hh:mm:ss") << " : " << steps << stepcounterSensor->isActive();
     //we probably ought to do some error checking here
     fileAddRecord(sensorPathPrefix,QString::number(steps - stepsOffset));
+    lastRecordTime = QDateTime::currentDateTime();
 }
