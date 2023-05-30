@@ -41,6 +41,7 @@
 HrGraph::HrGraph()
 {
     setFlag(ItemHasContents, true);
+    setAntialiasing(true);
     setRenderTarget(QQuickPaintedItem::FramebufferObject);
     loadGraphData();
 }
