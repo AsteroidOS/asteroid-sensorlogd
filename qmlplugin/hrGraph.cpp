@@ -63,6 +63,8 @@ void HrGraph::paint(QPainter *painter)
         points[i] = QPointF(m_lineWidth + calculatedTimeSeconds*(width()-2*m_lineWidth), m_lineWidth + calculatedValue*(height()-2*m_lineWidth)); //these +2 -1 are here to make sure that the graph fits within the drawn area, as it will be clipped by qt if it doesn't.
     }
     QPen pen;
+    pen.setCapStyle(Qt::RoundCap);
+    pen.setJoinStyle(Qt::RoundJoin);
     pen.setWidthF(m_lineWidth);
     pen.setColor(m_color);
     painter->setRenderHints(QPainter::Antialiasing);
