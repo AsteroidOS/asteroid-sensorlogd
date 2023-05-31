@@ -35,6 +35,7 @@ Logger::Logger(QObject *parent)  :
 void Logger::setup() {
     m_iface = new QDBusInterface("com.nokia.mce","/com/nokia/mce/signal", "com.nokia.mce.signal", QDBusConnection::systemBus());
     settings = new QSettings;
+    daemonFresh = getDaemonFresh();
 
     heartrateSensorEnabled = this->settings->value("heartrateSensor/enabled",true).toBool();
     stepCounterEnabled = this->settings->value("stepCounter/enabled",true).toBool();
@@ -46,7 +47,7 @@ void Logger::setup() {
 
 //initialise step counter
     if (stepCounterEnabled) {
-        m_stepCounter = new StepCounterPlugin(this,settings->value("stepCounter/interval",600000).toInt());
+        m_stepCounter = new StepCounterPlugin(this,settings->value("stepCounter/interval",600000).toInt(),daemonFresh);
     }
 
     if(!m_iface->isValid()) {
@@ -86,6 +87,26 @@ void Logger::triggerRecording() {
 
     if (stepCounterEnabled) {
         m_stepCounter->triggerRecording();
+    }
+}
+
+bool Logger::getDaemonFresh() {
+    QFile file("/proc/sys/kernel/random/boot_id");
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "failed to open bootId";
+        return 0;
+    }
+    QTextStream inStream(&file);
+    QString currBootId = inStream.readAll().trimmed();
+    file.close();
+    QSettings settings("asteroid","sensorlogd");
+    if(currBootId == settings.value("lastBootId","")) {
+        qDebug() << "daemon is not starting for first time this boot";
+        return false;
+    } else {
+        settings.setValue("lastBootId",currBootId);
+        qDebug() << "daemon is starting for first time this boot";
+        return true;
     }
 }
 
@@ -134,4 +155,5 @@ void setupFilePath(QString sensorPrefix) {
     QSettings settings("asteroid","sensorlogd"); //this should be moved out of here at some point TODO
     QDir::root().mkpath(settings.value("loggerRootPath",QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.asteroid-sensorlogd/").toString() + sensorPrefix);
 }
+
 

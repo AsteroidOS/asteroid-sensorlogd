@@ -22,7 +22,7 @@ class StepCounterPlugin : public QObject
 {
     Q_OBJECT
 public:
-    explicit StepCounterPlugin(QObject *parent = 0, int initInterval = 600000);
+    explicit StepCounterPlugin(QObject *parent = 0, int initInterval = 600000, bool daemonFresh = false);
     virtual ~StepCounterPlugin() {};
 
     void timeUpdate();

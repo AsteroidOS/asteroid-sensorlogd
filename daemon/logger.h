@@ -42,7 +42,9 @@ private:
     HeartrateSensorPlugin *m_heartrateSensor;
     bool stepCounterEnabled = false;
     StepCounterPlugin *m_stepCounter;
+    bool daemonFresh;
     QSettings *settings;
+    bool getDaemonFresh();
 
 };
     void fileAddRecord(QString sensorPrefix, QString logdata, QDateTime recordTime = QDateTime::currentDateTime()); //adds a record to today's log file for the given sensor
