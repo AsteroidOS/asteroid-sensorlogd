@@ -41,6 +41,7 @@ StepCounterPlugin::StepCounterPlugin(QObject *parent, int initInterval)  :
 
     if (dayFileExists(sensorPathPrefix)) {
         QStringList lastLineData = fileGetPrevRecord(sensorPathPrefix);
+        lastRecordTime = QDateTime::currentDateTime();
         stepcounterSensor->reading()->setSteps(lastLineData[1].toInt() + stepcounterSensor->reading()->steps()); // we add the last recorded value from today to the current value. This 'recovers' the steps from between reboots. I'm not sure how this will work on catfish or medaka.
     }
 }
