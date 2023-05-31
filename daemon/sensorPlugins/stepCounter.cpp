@@ -15,6 +15,7 @@
 #include <QtSensors/QStepCounterSensor>
 #include <QDebug>
 #include <QString>
+#include <time.h>
 
 #include "../logger.h"
 
@@ -36,18 +37,11 @@ StepCounterPlugin::StepCounterPlugin(QObject *parent, int initInterval)  :
     QDateTime currDateTime = QDateTime::currentDateTime();
 
     setupFilePath(sensorPathPrefix);
+    while (!stepcounterSensor->isActive()) {}
 
     if (dayFileExists(sensorPathPrefix)) {
         QStringList lastLineData = fileGetPrevRecord(sensorPathPrefix);
-        lastRecordTime = QDateTime::fromSecsSinceEpoch(lastLineData[0].toInt());
-        if (stepcounterSensor->reading()->steps() == 0) {
-            stepsOffset = -(lastLineData[1].toInt());
-        } else {
-            stepsOffset = - stepcounterSensor->reading()->steps() + (lastLineData[1].toInt());
-        }
-    } else {
-        //if it's a new day, we 'reset' the counter. this is crude - we should really check for a boot here, since certain machines have capability of counting steps when powered down.
-        stepsOffset = stepcounterSensor->reading()->steps();
+        stepcounterSensor->reading()->setSteps(lastLineData[1].toInt() + stepcounterSensor->reading()->steps()); // we add the last recorded value from today to the current value. This 'recovers' the steps from between reboots. I'm not sure how this will work on catfish or medaka.
     }
 }
 
@@ -66,15 +60,14 @@ void StepCounterPlugin::triggerRecording() {
     qDebug() << "stepcounter interval recording";
     if (lastRecordTime.date() < QDate::currentDate()) {
         int steps = stepcounterSensor->reading()->steps();
-        fileAddRecord(sensorPathPrefix,QString::number(steps - stepsOffset),QDateTime(QDate::currentDate().addDays(-1),QTime(23,59,59))); // this writes the current step count to the last second of the previous day
+        fileAddRecord(sensorPathPrefix,QString::number(steps),QDateTime(QDate::currentDate().addDays(-1),QTime(23,59,59))); // this writes the current step count to the last second of the previous day
         stepcounterSensor->reading()->setSteps(0); // and then we reset the step counter
-        stepsOffset = 0; // and, since the step counter has been reset, there's no need for an offset any more
         qDebug() << "date change detected; recorded " << steps << " to previous day and reset step counter hw";
     } else {
         int steps = stepcounterSensor->reading()->steps();
         qDebug() << QDateTime::currentDateTime().toString("hh:mm:ss") << " : " << steps << stepcounterSensor->isActive();
         //we probably ought to do some error checking here
-        fileAddRecord(sensorPathPrefix,QString::number(steps - stepsOffset));
+        fileAddRecord(sensorPathPrefix,QString::number(steps));
     }
     lastRecordTime = QDateTime::currentDateTime();
 }
