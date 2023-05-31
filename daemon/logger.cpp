@@ -57,6 +57,7 @@ void Logger::setup() {
 	    qDebug() << "healthd connected display_status signal to slot";
     }
     qDebug() << "healthd sensors logger initialised";
+    this->triggerRecording();
 }
 
 void Logger::resetup() {
