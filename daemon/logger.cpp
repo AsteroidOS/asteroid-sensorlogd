@@ -108,7 +108,7 @@ bool dayFileExists(QString sensorPrefix, QDateTime dateTime) {
 QStringList fileGetPrevRecord(QString sensorPrefix, QDateTime recordTime) {
     qDebug() << fileNameForDate(recordTime.date(), sensorPrefix);
     QFile file(fileNameForDate(recordTime.date(), sensorPrefix));
-    if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "failed to open file";
         return {0,0};
     }
