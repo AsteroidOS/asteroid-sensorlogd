@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     QCoreApplication::setOrganizationDomain("asteroidos.org");
     QCoreApplication::setApplicationName("sensorlogd");
     Logger sensorsLogger;
-    qDebug() << "healthd started";
+    qDebug() << "sensorlogd starting";
     qcoreapp.exec();
     return 0;
 }

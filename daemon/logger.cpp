@@ -55,9 +55,9 @@ void Logger::setup() {
 	    qDebug() << m_iface->lastError();
     }
     if(connect(m_iface, SIGNAL(display_status_ind(QString)), this, SLOT(displayOn(QString)))) { //this fires when the display turns on
-	    qDebug() << "healthd connected display_status signal to slot";
+	    qDebug() << "connected display_status signal to slot";
     }
-    qDebug() << "healthd sensors logger initialised";
+    qDebug() << "sensorlogd setup complete";
     this->triggerRecording();
 }
 
