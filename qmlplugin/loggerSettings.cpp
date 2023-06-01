@@ -12,49 +12,59 @@
 
 #include "loggerSettings.h"
 
-LoggerSettings::LoggerSettings() : QObject() {
-    m_settings = new QSettings("asteroid","sensorlogd");
-    m_iface = new QDBusInterface("org.asteroid.sensorlogd.logger","/org/asteroid/sensorlogd/logger","", QDBusConnection::sessionBus(), this);
+LoggerSettings::LoggerSettings()
+    : QObject()
+{
+    m_settings = new QSettings("asteroid", "sensorlogd");
+    m_iface = new QDBusInterface("org.asteroid.sensorlogd.logger", "/org/asteroid/sensorlogd/logger", "", QDBusConnection::sessionBus(), this);
     if (!m_iface->isValid()) {
-        qDebug()<<"interface is not valid";
+        qDebug() << "interface is not valid";
     } else {
-        qDebug()<<"interface is valid";
+        qDebug() << "interface is valid";
     }
 }
 
-void LoggerSettings::reInitLogger() {
+void LoggerSettings::reInitLogger()
+{
     m_iface->call("resetup");
 }
 
-bool LoggerSettings::getHeartrateSensorEnabled() {
-    return this->m_settings->value("heartrateSensor/enabled",true).toBool();
+bool LoggerSettings::getHeartrateSensorEnabled()
+{
+    return this->m_settings->value("heartrateSensor/enabled", true).toBool();
 }
 
-void LoggerSettings::setHeartrateSensorEnabled(bool value) {
-    this->m_settings->setValue("heartrateSensor/enabled",value);
+void LoggerSettings::setHeartrateSensorEnabled(bool value)
+{
+    this->m_settings->setValue("heartrateSensor/enabled", value);
 }
 
-int LoggerSettings::getHeartrateSensorInterval() {
-    return this->m_settings->value("heartrateSensor/interval",60000).toInt();
+int LoggerSettings::getHeartrateSensorInterval()
+{
+    return this->m_settings->value("heartrateSensor/interval", 600000).toInt();
 }
 
-void LoggerSettings::setHeartrateSensorInterval(int value) {
-    this->m_settings->setValue("heartrateSensor/interval",value);
+void LoggerSettings::setHeartrateSensorInterval(int value)
+{
+    this->m_settings->setValue("heartrateSensor/interval", value);
 }
 
-bool LoggerSettings::getStepCounterEnabled() {
-    return this->m_settings->value("stepCounter/enabled",true).toBool();
+bool LoggerSettings::getStepCounterEnabled()
+{
+    return this->m_settings->value("stepCounter/enabled", true).toBool();
 }
 
-void LoggerSettings::setStepCounterEnabled(bool value) {
-    this->m_settings->setValue("stepCounter/enabled",value);
+void LoggerSettings::setStepCounterEnabled(bool value)
+{
+    this->m_settings->setValue("stepCounter/enabled", value);
 }
 
-int LoggerSettings::getStepCounterInterval() {
-    return this->m_settings->value("stepCounter/interval",60000).toInt();
+int LoggerSettings::getStepCounterInterval()
+{
+    return this->m_settings->value("stepCounter/interval", 600000).toInt();
 }
 
-void LoggerSettings::setStepCounterInterval(int value) {
-    this->m_settings->setValue("stepCounter/interval",value);
+void LoggerSettings::setStepCounterInterval(int value)
+{
+    this->m_settings->setValue("stepCounter/interval", value);
 }
-
