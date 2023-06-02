@@ -8,21 +8,22 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <QDateTime>
 #include <QDate>
+#include <QDateTime>
+#include <QDebug>
+#include <QString>
 #include <QTime>
 #include <QTimer>
 #include <QtSensors/QStepCounterSensor>
-#include <QDebug>
-#include <QString>
 #include <time.h>
 
 #include "../logger.h"
 
 #include "stepCounter.h"
 
-StepCounterPlugin::StepCounterPlugin(QObject *parent, int initInterval, bool daemonFresh)  :
-    QObject(parent){
+StepCounterPlugin::StepCounterPlugin(QObject* parent, int initInterval, bool daemonFresh)
+    : QObject(parent)
+{
     interval = initInterval;
 
     stepcounterSensor = new QStepCounterSensor(this);
@@ -30,44 +31,49 @@ StepCounterPlugin::StepCounterPlugin(QObject *parent, int initInterval, bool dae
 
     qDebug() << "step counter sensor is enabled. interval is (ms) " << interval;
     recordIntervalTimer = new QTimer(this);
-    connect(recordIntervalTimer,SIGNAL(timeout()),this,SLOT(triggerRecording()));
+    connect(recordIntervalTimer, SIGNAL(timeout()), this, SLOT(triggerRecording()));
     recordIntervalTimer->setSingleShot(true);
     recordIntervalTimer->start(interval);
     QDateTime currDateTime = QDateTime::currentDateTime();
 
     setupFilePath(sensorPathPrefix);
-    while (!stepcounterSensor->isActive()) {}
+    while (!stepcounterSensor->isActive()) { }
 
     if (dayFileExists(sensorPathPrefix) && daemonFresh) {
         QStringList lastLineData = fileGetPrevRecord(sensorPathPrefix);
         lastRecordTime = QDateTime::currentDateTime();
         stepcounterSensor->reading()->setSteps(lastLineData[1].toInt() + stepcounterSensor->reading()->steps()); // we add the last recorded value from today to the current value. This 'recovers' the steps from between reboots. I'm not sure how this will work on catfish or medaka.
+
+    } else if (dayFileExists) {
+        lastRecordTime = QDateTime::currentDateTime();
     }
 }
 
-void StepCounterPlugin::timeUpdate() {
+void StepCounterPlugin::timeUpdate()
+{
     QDateTime currDateTime = QDateTime::currentDateTime();
     uint elapsed = currDateTime.toMSecsSinceEpoch() - lastRecordTime.toMSecsSinceEpoch();
     qDebug() << "time until next steps recording" << recordIntervalTimer->remainingTime() << " elapsed = " << elapsed << " lastRecordTime " << lastRecordTime.toMSecsSinceEpoch();
-    if (elapsed > interval) { //if too much time has passed, reset the timer and record
+    if (elapsed > interval) { // if too much time has passed, reset the timer and record
         triggerRecording();
-    } else { //otherwise, restart the timer and compensate for time spent in suspend
+    } else { // otherwise, restart the timer and compensate for time spent in suspend
         recordIntervalTimer->start(interval - elapsed);
     }
 }
 
-void StepCounterPlugin::triggerRecording() {
+void StepCounterPlugin::triggerRecording()
+{
     qDebug() << "stepcounter interval recording";
     if (lastRecordTime.date() < QDate::currentDate()) {
         int steps = stepcounterSensor->reading()->steps();
-        fileAddRecord(sensorPathPrefix,QString::number(steps),QDateTime(QDate::currentDate().addDays(-1),QTime(23,59,59))); // this writes the current step count to the last second of the previous day
+        fileAddRecord(sensorPathPrefix, QString::number(steps), QDateTime(QDate::currentDate().addDays(-1), QTime(23, 59, 59))); // this writes the current step count to the last second of the previous day
         stepcounterSensor->reading()->setSteps(0); // and then we reset the step counter
         qDebug() << "date change detected; recorded " << steps << " to previous day and reset step counter hw";
     } else {
         int steps = stepcounterSensor->reading()->steps();
         qDebug() << QDateTime::currentDateTime().toString("hh:mm:ss") << " : " << steps << stepcounterSensor->isActive();
-        //we probably ought to do some error checking here
-        fileAddRecord(sensorPathPrefix,QString::number(steps));
+        // we probably ought to do some error checking here
+        fileAddRecord(sensorPathPrefix, QString::number(steps));
     }
     lastRecordTime = QDateTime::currentDateTime();
 }
