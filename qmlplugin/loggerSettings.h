@@ -11,18 +11,20 @@
 #ifndef LOGGERSETTINGS_H
 #define LOGGERSETTINGS_H
 
+#include <QDBusInterface>
 #include <QObject>
 #include <QSettings>
-#include <QDBusInterface>
 
-class LoggerSettings : public QObject
-{
+class LoggerSettings : public QObject {
     Q_OBJECT
     Q_PROPERTY(bool heartrateSensorEnabled READ getHeartrateSensorEnabled WRITE setHeartrateSensorEnabled)
     Q_PROPERTY(int heartrateSensorInterval READ getHeartrateSensorInterval WRITE setHeartrateSensorInterval)
 
     Q_PROPERTY(bool stepCounterEnabled READ getStepCounterEnabled WRITE setStepCounterEnabled)
     Q_PROPERTY(int stepCounterInterval READ getStepCounterInterval WRITE setStepCounterInterval)
+
+    Q_PROPERTY(bool stepGoalEnabled READ getStepGoalEnabled WRITE setStepGoalEnabled)
+    Q_PROPERTY(int stepGoalTarget READ getStepGoalTarget WRITE setStepGoalTarget)
 
 public:
     explicit LoggerSettings();
@@ -38,8 +40,14 @@ public slots:
     void setStepCounterEnabled(bool value);
     int getStepCounterInterval();
     void setStepCounterInterval(int value); // This setting won't change anything live - service needs to be restarted. TODO
+
+    bool getStepGoalEnabled();
+    void setStepGoalEnabled(bool value);
+    int getStepGoalTarget();
+    void setStepGoalTarget(int value);
+
 private:
-    QSettings *m_settings;
-    QDBusInterface *m_iface;
+    QSettings* m_settings;
+    QDBusInterface* m_iface;
 };
 #endif // LOGGERSETTINGS_H

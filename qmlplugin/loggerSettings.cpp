@@ -68,3 +68,21 @@ void LoggerSettings::setStepCounterInterval(int value)
 {
     this->m_settings->setValue("stepCounter/interval", value);
 }
+
+bool LoggerSettings::getStepGoalEnabled()
+{
+    return this->m_settings->value("stepCounter/goal0/enabled", false).toBool();
+}
+void LoggerSettings::setStepGoalEnabled(bool value)
+{
+    this->m_settings->setValue("stepCounter/goal0/enabled", value);
+}
+int LoggerSettings::getStepGoalTarget()
+{
+    return this->m_settings->value("stepCounter/goal0/target", 0).toInt();
+}
+
+void LoggerSettings::setStepGoalTarget(int value)
+{
+    this->m_settings->setValue("stepCounter/goal0/target", value);
+}
