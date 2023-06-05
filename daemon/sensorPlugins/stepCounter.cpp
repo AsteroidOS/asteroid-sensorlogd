@@ -68,7 +68,7 @@ void StepCounterPlugin::triggerRecording()
         int steps = stepcounterSensor->reading()->steps();
         fileAddRecord(sensorPathPrefix, QString::number(steps), QDateTime(QDate::currentDate().addDays(-1), QTime(23, 59, 59))); // this writes the current step count to the last second of the previous day
         stepcounterSensor->reading()->setSteps(0); // and then we reset the step counter
-        qDebug() << "date change detected; recorded " << steps << " to previous day and reset step counter hw";
+        qDebug() << "date change detected; recorded " << steps << " to previous day and reset step counter hw. Step counter now holds " << stepcounterSensor->reading()->steps() << " steps";
     } else {
         int steps = stepcounterSensor->reading()->steps();
         qDebug() << QDateTime::currentDateTime().toString("hh:mm:ss") << " : " << steps << stepcounterSensor->isActive();
