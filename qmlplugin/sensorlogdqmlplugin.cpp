@@ -8,22 +8,19 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 #include "sensorlogdqmlplugin.h"
-#include <QtQml>
-#include "stepsDataLoader.h"
 #include "loggerSettings.h"
-#include "hrGraph.h"
+#include "stepsDataLoader.h"
+#include <QtQml>
 
-LogdPlugin::LogdPlugin(QObject *parent) : QQmlExtensionPlugin(parent)
+LogdPlugin::LogdPlugin(QObject* parent)
+    : QQmlExtensionPlugin(parent)
 {
 }
 
-void LogdPlugin::registerTypes(const char *uri)
+void LogdPlugin::registerTypes(const char* uri)
 {
     Q_ASSERT(uri == QLatin1String("org.asteroid.sensorlogd"));
     qmlRegisterType<StepsDataLoader>(uri, 1, 0, "StepsDataLoader");
     qmlRegisterType<LoggerSettings>(uri, 1, 0, "LoggerSettings");
-    qmlRegisterType<HrGraph>(uri, 1, 0, "HeartrateGraph");
 }
-
