@@ -15,14 +15,14 @@
 #include <QDateTime>
 #include <QDBusInterface>
 #include <QTimer>
+#include <QSettings>
 
 #include <QtSensors/QStepCounterSensor>
 
-class StepCounterPlugin : public QObject
-{
+class StepCounterPlugin : public QObject {
     Q_OBJECT
 public:
-    explicit StepCounterPlugin(QObject *parent = 0, int initInterval = 600000, bool daemonFresh = false);
+    explicit StepCounterPlugin(QObject* parent = 0, int initInterval = 600000, bool daemonFresh = false);
     virtual ~StepCounterPlugin() {};
 
     void timeUpdate();
@@ -35,6 +35,8 @@ private:
     int interval;
     QTimer *recordIntervalTimer;
     QStepCounterSensor *stepcounterSensor;
+    int m_stepsOffset;
+    QSettings *m_settings;
 
     const QString sensorPathPrefix = "stepCounter";
 };
