@@ -13,6 +13,7 @@
 
 #include <QObject>
 #include <QDBusInterface>
+#include <QPointF>
 
 class StepsDataLoader : public QObject
 {
@@ -20,8 +21,10 @@ class StepsDataLoader : public QObject
 
 public:
     explicit StepsDataLoader();
-    Q_INVOKABLE int getDataForDate(QDate date);
-    Q_INVOKABLE int getTodayData();
+    Q_INVOKABLE int getTotalForDate(QDate date);
+    Q_INVOKABLE int getTodayTotal();
+    Q_INVOKABLE QList<QPointF> getDataForDate(QDate date);
+    Q_INVOKABLE QList<QPointF> getTodayData();
     Q_INVOKABLE void triggerDaemonRecording();
 private:
     QDBusInterface *m_iface;

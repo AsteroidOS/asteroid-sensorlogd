@@ -15,6 +15,7 @@
 #include <QSettings>
 #include <QStandardPaths>
 #include <QDBusInterface>
+#include <QPointF>
 
 #include "stepsDataLoader.h"
 
@@ -28,12 +29,12 @@ StepsDataLoader::StepsDataLoader() : QObject()
     }
 }
 
-int StepsDataLoader::getTodayData() {
-    return getDataForDate(QDate::currentDate());
+int StepsDataLoader::getTodayTotal() {
+    return getTotalForDate(QDate::currentDate());
 }
 
-int StepsDataLoader::getDataForDate(QDate date) { // This is obvious garbage. This should really be abstracted and cached, so that every page doesn't have to reload the file from scratch.
-// The intention is to also add graph functionality at some point. The graph will be simplifying the data before loading it in - it would be worth caching the simplified data when it comes to that as well.
+int StepsDataLoader::getTotalForDate(QDate date) { // This is obvious garbage. This should really be abstracted and cached, so that every page doesn't have to reload the file from scratch.
+    // The intention is to also add graph functionality at some point. The graph will be simplifying the data before loading it in - it would be worth caching the simplified data when it comes to that as well.
     QFile file(fileNameForDate(date, "stepCounter"));
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "failed to open file";
@@ -42,8 +43,7 @@ int StepsDataLoader::getDataForDate(QDate date) { // This is obvious garbage. Th
     QTextStream inStream(&file);
     QString line = "0";
     int i;
-    while(!inStream.atEnd())
-    {
+    while (!inStream.atEnd()) {
         line = inStream.readLine();
         qDebug() << line;
         i++;
@@ -52,12 +52,35 @@ int StepsDataLoader::getDataForDate(QDate date) { // This is obvious garbage. Th
     return line.split(":")[1].toInt();
 }
 
+QList<QPointF> StepsDataLoader::getTodayData() {
+    return getDataForDate(QDate::currentDate());
+}
+
+QList<QPointF> StepsDataLoader::getDataForDate(QDate date) {
+    QList<QPointF> m_filedata;
+    QFile file(fileNameForDate(date, "stepCounter"));
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "failed to open file";
+        return m_filedata;
+    }
+    QTextStream inStream(&file);
+    QString line;
+    while (!inStream.atEnd()) {
+        line = inStream.readLine();
+        QPointF point;
+        point.setX(line.split(":")[0].toInt());
+        point.setY(line.split(":")[1].toInt());
+        m_filedata.append(point);
+    }
+    file.close();
+    return m_filedata;
+}
+
 void StepsDataLoader::triggerDaemonRecording() {
     m_iface->call("triggerRecording");
 }
 
-
 QString fileNameForDate(QDate date, QString prefix) {
-    QSettings settings("asteroid","sensorlogd"); //this should be moved out of here at some point TODO
-    return settings.value("loggerRootPath",QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.asteroid-sensorlogd/").toString() + prefix + "/" + date.toString("yyyy-MM-dd.log");
+    QSettings settings("asteroid", "sensorlogd"); // this should be moved out of here at some point TODO
+    return settings.value("loggerRootPath", QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.asteroid-sensorlogd/").toString() + prefix + "/" + date.toString("yyyy-MM-dd.log");
 }
