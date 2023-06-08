@@ -8,21 +8,25 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "sensorlogdqmlplugin.h"
-#include "loggerSettings.h"
-#include "stepsDataLoader.h"
-#include "hrDataLoader.h"
-#include <QtQml>
+#ifndef HRDATALOADER_H
+#define HRDATALOADER_H
 
-LogdPlugin::LogdPlugin(QObject* parent)
-    : QQmlExtensionPlugin(parent)
-{
-}
+#include <QObject>
+#include <QDBusInterface>
+#include <QPointF>
+#include <QDate>
 
-void LogdPlugin::registerTypes(const char* uri)
+class HrDataLoader : public QObject
 {
-    Q_ASSERT(uri == QLatin1String("org.asteroid.sensorlogd"));
-    qmlRegisterType<StepsDataLoader>(uri, 1, 0, "StepsDataLoader");
-    qmlRegisterType<HrDataLoader>(uri, 1, 0, "HrDataLoader");
-    qmlRegisterType<LoggerSettings>(uri, 1, 0, "LoggerSettings");
-}
+    Q_OBJECT
+
+public:
+    explicit HrDataLoader();
+    Q_INVOKABLE QList<QPointF> getDataForDate(QDate date);
+    Q_INVOKABLE QList<QPointF> getTodayData();
+    Q_INVOKABLE void triggerDaemonRecording();
+private:
+    QDBusInterface *m_iface;
+};
+
+#endif // HRDATALOADER_H

@@ -4,6 +4,8 @@ add_library(
     sensorlogdqmlplugin.h
     stepsDataLoader.cpp
     stepsDataLoader.h
+    hrDataLoader.cpp
+    hrDataLoader.h
     loggerSettings.cpp
     loggerSettings.h
     ../common.cpp
