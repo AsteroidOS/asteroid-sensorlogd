@@ -1,4 +1,4 @@
-/*/*
+ /*
  * Copyright (C) 2023 Arseniy Movshev <dodoradio@outlook.com>
  * This file is part of sensorlogd, a sensor logger for the AsteroidOS smartwatch OS.
  *
@@ -8,26 +8,11 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef STEPSDATALOADER_H
-#define STEPSDATALOADER_H
+#include <QSettings>
+#include <QStandardPaths>
+#include "common.h"
 
-#include <QObject>
-#include <QDBusInterface>
-#include <QPointF>
-
-class StepsDataLoader : public QObject
-{
-    Q_OBJECT
-
-public:
-    explicit StepsDataLoader();
-    Q_INVOKABLE int getTotalForDate(QDate date);
-    Q_INVOKABLE int getTodayTotal();
-    Q_INVOKABLE QList<QPointF> getDataForDate(QDate date);
-    Q_INVOKABLE QList<QPointF> getTodayData();
-    Q_INVOKABLE void triggerDaemonRecording();
-private:
-    QDBusInterface *m_iface;
-};
-
-#endif // STEPSDATALOADER_H
+QString fileNameForDate(QDate date, QString prefix) {
+    QSettings settings("asteroid", "sensorlogd"); // this should be moved out of here at some point TODO
+    return settings.value("loggerRootPath", QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.asteroid-sensorlogd/").toString() + prefix + "/" + date.toString("yyyy-MM-dd.log");
+}

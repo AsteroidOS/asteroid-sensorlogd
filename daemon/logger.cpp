@@ -21,6 +21,7 @@
 #include <QStandardPaths>
 
 #include "logger.h"
+#include "../common.h"
 
 #include "sensorPlugins/stepCounter.h"
 #include "sensorPlugins/heartrateSensor.h"
@@ -144,11 +145,6 @@ QStringList fileGetPrevRecord(QString sensorPrefix, QDateTime recordTime) {
     }
     file.close();
     return line.split(":");
-}
-
-QString fileNameForDate(QDate date, QString prefix) {
-    QSettings settings("asteroid","sensorlogd"); //this should be moved out of here at some point TODO
-    return settings.value("loggerRootPath",QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.asteroid-sensorlogd/").toString() + prefix + "/" + date.toString("yyyy-MM-dd.log");
 }
 
 void setupFilePath(QString sensorPrefix) {

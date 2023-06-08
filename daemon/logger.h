@@ -50,7 +50,6 @@ private:
     void fileAddRecord(QString sensorPrefix, QString logdata, QDateTime recordTime = QDateTime::currentDateTime()); //adds a record to today's log file for the given sensor
     bool dayFileExists(QString sensorPrefix, QDateTime date = QDateTime::currentDateTime()); //check if today has a log file for the given sensor
     QStringList fileGetPrevRecord(QString sensorPrefix, QDateTime recordTime = QDateTime::currentDateTime()); //works backwards to find the last record in today's file before the given time - returns nothing if no file is found.
-    QString fileNameForDate(QDate date, QString prefix);
     void setupFilePath(QString sensorPrefix); //sets up the paths for sensors to write into
 
 #endif // LOGGER_H

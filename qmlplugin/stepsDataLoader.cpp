@@ -13,11 +13,11 @@
 #include <QTextStream>
 #include <QDate>
 #include <QSettings>
-#include <QStandardPaths>
 #include <QDBusInterface>
 #include <QPointF>
 
 #include "stepsDataLoader.h"
+#include "../common.h"
 
 StepsDataLoader::StepsDataLoader() : QObject()
 {
@@ -78,9 +78,4 @@ QList<QPointF> StepsDataLoader::getDataForDate(QDate date) {
 
 void StepsDataLoader::triggerDaemonRecording() {
     m_iface->call("triggerRecording");
-}
-
-QString fileNameForDate(QDate date, QString prefix) {
-    QSettings settings("asteroid", "sensorlogd"); // this should be moved out of here at some point TODO
-    return settings.value("loggerRootPath", QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.asteroid-sensorlogd/").toString() + prefix + "/" + date.toString("yyyy-MM-dd.log");
 }

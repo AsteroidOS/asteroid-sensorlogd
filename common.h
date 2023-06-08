@@ -1,4 +1,4 @@
-/*/*
+ /*
  * Copyright (C) 2023 Arseniy Movshev <dodoradio@outlook.com>
  * This file is part of sensorlogd, a sensor logger for the AsteroidOS smartwatch OS.
  *
@@ -8,26 +8,12 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef STEPSDATALOADER_H
-#define STEPSDATALOADER_H
+#ifndef SENSORLOGD_COMMON_H
+#define SENSORLOGD_COMMON_H
 
-#include <QObject>
-#include <QDBusInterface>
-#include <QPointF>
+#include <QDate>
+#include <QString>
 
-class StepsDataLoader : public QObject
-{
-    Q_OBJECT
+QString fileNameForDate(QDate date, QString prefix);
 
-public:
-    explicit StepsDataLoader();
-    Q_INVOKABLE int getTotalForDate(QDate date);
-    Q_INVOKABLE int getTodayTotal();
-    Q_INVOKABLE QList<QPointF> getDataForDate(QDate date);
-    Q_INVOKABLE QList<QPointF> getTodayData();
-    Q_INVOKABLE void triggerDaemonRecording();
-private:
-    QDBusInterface *m_iface;
-};
-
-#endif // STEPSDATALOADER_H
+#endif //SENSORLOGD_COMMON_H

@@ -6,6 +6,8 @@ add_library(
     stepsDataLoader.h
     loggerSettings.cpp
     loggerSettings.h
+    ../common.cpp
+    ../common.h
 )
 
 target_link_libraries(sensorlogdqmlplugin
