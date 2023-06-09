@@ -35,7 +35,7 @@ private:
     int interval;
     QTimer *recordIntervalTimer;
     QStepCounterSensor *stepcounterSensor;
-    int m_stepsOffset;
+    int m_stepsOffset = 0;
     QSettings *m_settings;
 
     const QString sensorPathPrefix = "stepCounter";

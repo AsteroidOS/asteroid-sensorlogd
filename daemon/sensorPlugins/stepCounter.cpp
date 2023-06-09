@@ -44,11 +44,12 @@ StepCounterPlugin::StepCounterPlugin(QObject* parent, int initInterval, bool dae
     if (dayFileExists(sensorPathPrefix) && daemonFresh) {
         QStringList lastLineData = fileGetPrevRecord(sensorPathPrefix);
         lastRecordTime = QDateTime::currentDateTime();
-        m_stepsOffset = -lastLineData[1].toInt(); // we add the last recorded value from today to the current value. This 'recovers' the steps from between reboots. I'm not sure how this will work on catfish or medaka.
+        m_stepsOffset = stepcounterSensor->reading()->steps() - lastLineData[1].toInt(); // we reset the step count, ignoring all steps that may have been taken while the daemon isn't running. Devices which count steps independently will need custom code.
     } else if (dayFileExists) {
         lastRecordTime = QDateTime::currentDateTime();
         m_stepsOffset = m_settings->value("StepCounterPrivate/stepsOffset", 0).toInt();
     }
+    m_settings->setValue("StepCounterPrivate/stepsOffset", m_stepsOffset);
 }
 
 void StepCounterPlugin::timeUpdate()
@@ -66,16 +67,27 @@ void StepCounterPlugin::timeUpdate()
 void StepCounterPlugin::triggerRecording()
 {
     qDebug() << "stepcounter interval recording";
-    if (lastRecordTime.date() < QDate::currentDate()) {
-        int steps = stepcounterSensor->reading()->steps() - m_stepsOffset;
-        fileAddRecord(sensorPathPrefix, QString::number(steps), QDateTime(QDate::currentDate().addDays(-1), QTime(23, 59, 59))); // this writes the current step count to the last second of the previous day
-        m_stepsOffset = stepcounterSensor->reading()->steps(); // and then we reset the step counter
+    int rawSteps = stepcounterSensor->reading()->steps();
+    if (lastRecordTime.date() != QDate::currentDate()) { // ok, so the date has changed.
+        if (dayFileExists(sensorPathPrefix)) { // this likely means we have just had a system time change
+            QStringList lastLineData = fileGetPrevRecord(sensorPathPrefix);
+            m_stepsOffset = rawSteps - lastLineData[1].toInt(); // we scrap the current steps value, recover the last reading from today's file and count from there
+                // The reset is necessary because asteroid doesn't have robust time when it boots up, it takes a while for that to happen. So, instead of dealing with that, we just reset the counter every time there's a date change
+        } else if (lastRecordTime.date() == QDate::currentDate().addDays(-1)) { // this means that a midnight just passed
+            int steps = rawSteps - m_stepsOffset;
+            fileAddRecord(sensorPathPrefix, QString::number(steps), QDateTime(QDate::currentDate().addDays(-1), QTime(23, 59, 59))); // this writes the current step count to the last second of the previous day
+            m_stepsOffset = rawSteps; // and then we 'reset' the step counter
+        }
         m_settings->setValue("StepCounterPrivate/stepsOffset", m_stepsOffset);
-        qDebug() << "date change detected; recorded " << steps << " to previous day and reset step counter hw.";
+        qDebug() << "date change detected. Step counter value is " << rawSteps << " and offset is " << m_stepsOffset;
     } else {
-        int steps = stepcounterSensor->reading()->steps() - m_stepsOffset;
+        int steps = rawSteps - m_stepsOffset;
         qDebug() << QDateTime::currentDateTime().toString("hh:mm:ss") << " : " << steps << stepcounterSensor->isActive();
         // we probably ought to do some error checking here
+        if (steps < fileGetPrevRecord(sensorPathPrefix)[1].toInt()) {
+            qDebug() << "error: offset value is less than previous value - not recording"; // this is an error condition which is either caused by a bad offset value or by the sensor being slow and returning a bad value
+            return;
+        }
         fileAddRecord(sensorPathPrefix, QString::number(steps));
     }
     lastRecordTime = QDateTime::currentDateTime();
