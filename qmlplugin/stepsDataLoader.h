@@ -15,9 +15,12 @@
 #include <QDBusInterface>
 #include <QPointF>
 
+#include <QtSensors/QStepCounterSensor>
+
 class StepsDataLoader : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(int todayTotal READ getTodayTotal() NOTIFY todayTotalChanged())
 
 public:
     explicit StepsDataLoader();
@@ -26,8 +29,12 @@ public:
     Q_INVOKABLE QList<QPointF> getDataForDate(QDate date);
     Q_INVOKABLE QList<QPointF> getTodayData();
     Q_INVOKABLE void triggerDaemonRecording();
+
+signals:
+    void todayTotalChanged();
 private:
     QDBusInterface *m_iface;
+    QStepCounterSensor *m_stepcounterSensor;
 };
 
 #endif // STEPSDATALOADER_H

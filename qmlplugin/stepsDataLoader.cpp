@@ -16,11 +16,16 @@
 #include <QDBusInterface>
 #include <QPointF>
 
+#include <QtSensors/QStepCounterSensor>
+
 #include "stepsDataLoader.h"
 #include "../common.h"
 
 StepsDataLoader::StepsDataLoader() : QObject()
 {
+    m_stepcounterSensor = new QStepCounterSensor(this);
+    m_stepcounterSensor->start();
+    connect(m_stepcounterSensor,SIGNAL(readingChanged()),this,SIGNAL(todayTotalChanged()));
     m_iface = new QDBusInterface("org.asteroid.sensorlogd.logger","/org/asteroid/sensorlogd/logger","", QDBusConnection::sessionBus(), this);
     if (!m_iface->isValid()) {
         qDebug()<<"interface is not valid";
@@ -30,7 +35,8 @@ StepsDataLoader::StepsDataLoader() : QObject()
 }
 
 int StepsDataLoader::getTodayTotal() {
-    return getTotalForDate(QDate::currentDate());
+    QSettings settings("asteroid", "sensorlogd");
+    return m_stepcounterSensor->reading()->steps() - settings.value("StepCounterPrivate/stepsOffset", 0).toInt();
 }
 
 int StepsDataLoader::getTotalForDate(QDate date) { // This is obvious garbage. This should really be abstracted and cached, so that every page doesn't have to reload the file from scratch.
