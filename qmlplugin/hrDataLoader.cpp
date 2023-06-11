@@ -29,16 +29,16 @@ HrDataLoader::HrDataLoader() : QObject()
     }
 }
 
-QList<QPointF> HrDataLoader::getTodayData() {
+QVariant HrDataLoader::getTodayData() {
     return getDataForDate(QDate::currentDate());
 }
 
-QList<QPointF> HrDataLoader::getDataForDate(QDate date) {
+QVariant HrDataLoader::getDataForDate(QDate date) {
     QList<QPointF> m_filedata;
     QFile file(fileNameForDate(date, "heartrateMonitor"));
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "failed to open file";
-        return m_filedata;
+        return QVariant::fromValue(m_filedata);
     }
     QTextStream inStream(&file);
     QString line;
@@ -50,7 +50,7 @@ QList<QPointF> HrDataLoader::getDataForDate(QDate date) {
         m_filedata.append(point);
     }
     file.close();
-    return m_filedata;
+    return QVariant::fromValue(m_filedata);
 }
 
 void HrDataLoader::triggerDaemonRecording() {

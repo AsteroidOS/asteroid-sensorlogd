@@ -58,16 +58,16 @@ int StepsDataLoader::getTotalForDate(QDate date) { // This is obvious garbage. T
     return line.split(":")[1].toInt();
 }
 
-QList<QPointF> StepsDataLoader::getTodayData() {
+QVariant StepsDataLoader::getTodayData() {
     return getDataForDate(QDate::currentDate());
 }
 
-QList<QPointF> StepsDataLoader::getDataForDate(QDate date) {
+QVariant StepsDataLoader::getDataForDate(QDate date) {
     QList<QPointF> m_filedata;
     QFile file(fileNameForDate(date, "stepCounter"));
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "failed to open file";
-        return m_filedata;
+        return QVariant::fromValue(m_filedata);
     }
     QTextStream inStream(&file);
     QString line;
@@ -79,7 +79,7 @@ QList<QPointF> StepsDataLoader::getDataForDate(QDate date) {
         m_filedata.append(point);
     }
     file.close();
-    return m_filedata;
+    return QVariant::fromValue(m_filedata);
 }
 
 void StepsDataLoader::triggerDaemonRecording() {

@@ -22,8 +22,8 @@ class HrDataLoader : public QObject
 
 public:
     explicit HrDataLoader();
-    Q_INVOKABLE QList<QPointF> getDataForDate(QDate date);
-    Q_INVOKABLE QList<QPointF> getTodayData();
+    Q_INVOKABLE QVariant getDataForDate(QDate date);
+    Q_INVOKABLE QVariant getTodayData();
     Q_INVOKABLE void triggerDaemonRecording();
 private:
     QDBusInterface *m_iface;
