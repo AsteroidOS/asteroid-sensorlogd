@@ -6,6 +6,8 @@ add_library(
     stepsDataLoader.h
     hrDataLoader.cpp
     hrDataLoader.h
+    weightDataLoader.cpp
+    weightDataLoader.h
     loggerSettings.cpp
     loggerSettings.h
     ../common.cpp
