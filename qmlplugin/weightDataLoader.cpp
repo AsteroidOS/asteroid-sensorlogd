@@ -53,6 +53,10 @@ QVariant WeightDataLoader::getDataForDate(QDate date) {
     return QVariant::fromValue(m_filedata);
 }
 
+void WeightDataLoader::addDataPoint(qreal value) {
+    fileAddRecord("weight",QString::number(value));
+}
+
 void WeightDataLoader::triggerDaemonRecording() {
     m_iface->call("triggerRecording");
 }
