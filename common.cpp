@@ -10,9 +10,24 @@
 
 #include <QSettings>
 #include <QStandardPaths>
+#include <QFile>
+#include <QDebug>
 #include "common.h"
 
 QString fileNameForDate(QDate date, QString prefix) {
     QSettings settings("asteroid", "sensorlogd"); // this should be moved out of here at some point TODO
     return settings.value("loggerRootPath", QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.asteroid-sensorlogd/").toString() + prefix + "/" + date.toString("yyyy-MM-dd.log");
+}
+
+void fileAddRecord(QString sensorPrefix, QString logdata, QDateTime recordTime) { //adds a record to today's log file for the given sensor
+    qDebug() << fileNameForDate(recordTime.date(), sensorPrefix);
+    QFile file(fileNameForDate(recordTime.date(), sensorPrefix));
+    if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
+        qDebug() << "failed to open file";
+        return;
+    }
+    file.seek(file.size());
+    QTextStream out(&file);
+    out << QString::number(recordTime.currentSecsSinceEpoch()) + ":" + logdata + "\n";
+    file.close();
 }

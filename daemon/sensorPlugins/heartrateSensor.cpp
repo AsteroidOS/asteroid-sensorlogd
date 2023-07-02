@@ -16,6 +16,7 @@
 #include <QString>
 
 #include "../logger.h"
+#include "../../common.h"
 
 #include "heartrateSensor.h"
 

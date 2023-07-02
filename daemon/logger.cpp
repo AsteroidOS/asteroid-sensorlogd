@@ -111,18 +111,6 @@ bool Logger::getDaemonFresh() {
     }
 }
 
-void fileAddRecord(QString sensorPrefix, QString logdata, QDateTime recordTime) { //adds a record to today's log file for the given sensor
-    qDebug() << fileNameForDate(recordTime.date(), sensorPrefix);
-    QFile file(fileNameForDate(recordTime.date(), sensorPrefix));
-    if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
-        qDebug() << "failed to open file";
-        return;
-    }
-    file.seek(file.size());
-    QTextStream out(&file);
-    out << QString::number(recordTime.currentSecsSinceEpoch()) + ":" + logdata + "\n";
-    file.close();
-}
 bool dayFileExists(QString sensorPrefix, QDateTime dateTime) {
     return QFile::exists(fileNameForDate(dateTime.date(), sensorPrefix));
 }

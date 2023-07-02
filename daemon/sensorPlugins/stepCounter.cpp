@@ -19,6 +19,7 @@
 #include <time.h>
 
 #include "../logger.h"
+#include "../../common.h"
 
 #include "stepCounter.h"
 
