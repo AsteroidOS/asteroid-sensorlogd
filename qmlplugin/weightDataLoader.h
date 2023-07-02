@@ -26,6 +26,8 @@ public:
     Q_INVOKABLE QVariant getTodayData();
     Q_INVOKABLE void triggerDaemonRecording();
     Q_INVOKABLE void addDataPoint(qreal value);
+    Q_INVOKABLE QVariant getDataFromTo(QDate date1, QDate date2);
+    QList<QPointF> getRawDataForDate(QDate date);
 private:
     QDBusInterface *m_iface;
 };

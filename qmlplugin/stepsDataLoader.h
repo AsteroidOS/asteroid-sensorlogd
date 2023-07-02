@@ -29,7 +29,8 @@ public:
     Q_INVOKABLE QVariant getDataForDate(QDate date);
     Q_INVOKABLE QVariant getTodayData();
     Q_INVOKABLE void triggerDaemonRecording();
-
+    Q_INVOKABLE QVariant getDataFromTo(QDate date1, QDate date2);
+    QList<QPointF> getRawDataForDate(QDate date);
 signals:
     void todayTotalChanged();
 private:
