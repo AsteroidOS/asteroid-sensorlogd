@@ -14,6 +14,7 @@
 #include <QtSensors/QPressureSensor>
 #include <QDebug>
 #include <QString>
+#include <MGConfItem>
 
 #include "../logger.h"
 #include "../../common.h"
@@ -28,8 +29,10 @@ BarometerSensorPlugin::BarometerSensorPlugin(QObject *parent, int initInterval) 
     connect(barometerSensor,SIGNAL(readingChanged()),this,SLOT(finishRecording()));
 
     setupFilePath(sensorPathPrefix);
+    setupFilePath(sensorPathPrefixCompensated);
 
     qDebug() << "barometer sensor is enabled. interval is (ms) " << interval;
+    m_barometerOffsetGconf = new MGConfItem("/org/asteroidos/sensors/barometer-offset");
     recordIntervalTimer = new QTimer(this);
     connect(recordIntervalTimer,SIGNAL(timeout()),this,SLOT(triggerRecording()));
     recordIntervalTimer->setSingleShot(true);
@@ -63,5 +66,6 @@ void BarometerSensorPlugin::finishRecording() {
         return;
     }
     fileAddRecord(sensorPathPrefix,QString::number(pressure));
+    fileAddRecord(sensorPathPrefixCompensated,QString::number(pressure - m_barometerOffsetGconf->value(0).toInt()));
     barometerSensor->stop();
 }

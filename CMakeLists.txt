@@ -18,6 +18,7 @@ include(AsteroidCMakeSettings)
 include(AsteroidCMakeSettings)
 
 find_package(Qt5 COMPONENTS Core DBus Qml Sensors REQUIRED)
+find_package(Mlite5 MODULE REQUIRED)
 
 add_subdirectory(daemon)
 add_subdirectory(qmlplugin)

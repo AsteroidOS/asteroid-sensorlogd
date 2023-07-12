@@ -16,6 +16,7 @@
 #include <QDBusInterface>
 #include <QTimer>
 #include <QSettings>
+#include <MGConfItem>
 
 #include <QtSensors/QPressureSensor>
 
@@ -39,8 +40,10 @@ private:
     QTimer *recordIntervalTimer;
     QPressureSensor *barometerSensor;
     QSettings *m_settings;
+    MGConfItem *m_barometerOffsetGconf;
 
     const QString sensorPathPrefix = "barometer-raw";
+    const QString sensorPathPrefixCompensated = "barometer-compensated";
 };
 
 #endif // BAROMETERSENSOR_H
