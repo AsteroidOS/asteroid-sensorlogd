@@ -17,7 +17,7 @@ include(AsteroidCMakeSettings)
 
 include(AsteroidCMakeSettings)
 
-find_package(Qt5 COMPONENTS Core DBus Qml Positioning Sensors REQUIRED)
+find_package(Qt5 COMPONENTS Core DBus Qml Sensors REQUIRED)
 
 add_subdirectory(daemon)
 add_subdirectory(qmlplugin)
