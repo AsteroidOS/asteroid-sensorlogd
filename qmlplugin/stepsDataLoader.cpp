@@ -36,11 +36,11 @@ StepsDataLoader::StepsDataLoader() : QObject()
 
 int StepsDataLoader::getTodayTotal() {
     QSettings settings("asteroid", "sensorlogd");
-    int total =  m_stepcounterSensor->reading()->steps() - settings.value("StepCounterPrivate/stepsOffset", 0).toInt();
-    if (total < 0) {
+    int steps =  m_stepcounterSensor->reading()->steps();
+    if (steps < 1) {
         return getTotalForDate(QDate::currentDate());
     }
-    return total;
+    return steps - settings.value("StepCounterPrivate/stepsOffset", 0).toInt();
 }
 
 int StepsDataLoader::getTotalForDate(QDate date) { // This is obvious garbage. This should really be abstracted and cached, so that every page doesn't have to reload the file from scratch.
