@@ -22,6 +22,7 @@
 
 #include "sensorPlugins/stepCounter.h"
 #include "sensorPlugins/heartrateSensor.h"
+#include "sensorPlugins/barometerSensor.h"
 
 class Logger : public QObject
 {
@@ -42,6 +43,8 @@ private:
     HeartrateSensorPlugin *m_heartrateSensor;
     bool stepCounterEnabled = false;
     StepCounterPlugin *m_stepCounter;
+    bool barometerEnabled = false;
+    BarometerSensorPlugin *m_barometerSensor;
     bool daemonFresh;
     QSettings *settings;
     bool getDaemonFresh();

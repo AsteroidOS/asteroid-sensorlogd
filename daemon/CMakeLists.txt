@@ -6,6 +6,8 @@ add_executable(sensorlogd
     sensorPlugins/stepCounter.h
     sensorPlugins/heartrateSensor.cpp
     sensorPlugins/heartrateSensor.h
+    sensorPlugins/barometerSensor.cpp
+    sensorPlugins/barometerSensor.h
     ../common.cpp
     ../common.h
 )

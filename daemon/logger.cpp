@@ -24,6 +24,7 @@
 
 #include "sensorPlugins/stepCounter.h"
 #include "sensorPlugins/heartrateSensor.h"
+#include "sensorPlugins/barometerSensor.h"
 
 Logger::Logger(QObject *parent)  :
     QObject(parent){
@@ -39,6 +40,7 @@ void Logger::setup() {
 
     heartrateSensorEnabled = this->settings->value("heartrateSensor/enabled",true).toBool();
     stepCounterEnabled = this->settings->value("stepCounter/enabled",true).toBool();
+    barometerEnabled = this->settings->value("barometer/enabled",true).toBool();
 
 //intialise HRM
     if (heartrateSensorEnabled) {
@@ -48,6 +50,11 @@ void Logger::setup() {
 //initialise step counter
     if (stepCounterEnabled) {
         m_stepCounter = new StepCounterPlugin(this,settings->value("stepCounter/interval",600000).toInt(),daemonFresh);
+    }
+
+//initialise barometer
+    if (barometerEnabled) {
+        m_barometerSensor = new BarometerSensorPlugin(this,settings->value("barometer/interval",600000).toInt());
     }
 
     if(!m_iface->isValid()) {
@@ -78,6 +85,10 @@ void Logger::displayOn(QString displayState) {
     if (stepCounterEnabled) {
         m_stepCounter->timeUpdate();
     }
+
+    if (barometerEnabled) {
+        m_barometerSensor->timeUpdate();
+    }
 }
 
 void Logger::triggerRecording() {
@@ -87,6 +98,10 @@ void Logger::triggerRecording() {
 
     if (stepCounterEnabled) {
         m_stepCounter->triggerRecording();
+    }
+
+    if (barometerEnabled) {
+        m_barometerSensor->triggerRecording();
     }
 }
 
