@@ -15,6 +15,7 @@
 #include <QSettings>
 #include <QDBusInterface>
 #include <QPointF>
+#include <QFileSystemWatcher>
 
 #include <QtSensors/QStepCounterSensor>
 
@@ -32,6 +33,10 @@ StepsDataLoader::StepsDataLoader() : QObject()
     } else {
         qDebug()<<"interface is valid";
     }
+    m_fileWatcher = new QFileSystemWatcher();
+    m_fileWatcher->addPath(sensorDirPath("stepCounter"));
+    QObject::connect(m_fileWatcher,SIGNAL(directoryChanged(const QString)),this,SIGNAL(dataChanged()));
+    QObject::connect(m_fileWatcher,SIGNAL(fileChanged(const QString)),this,SIGNAL(dataChanged()));
 }
 
 int StepsDataLoader::getTodayTotal() {
@@ -45,10 +50,15 @@ int StepsDataLoader::getTodayTotal() {
 
 int StepsDataLoader::getTotalForDate(QDate date) { // This is obvious garbage. This should really be abstracted and cached, so that every page doesn't have to reload the file from scratch.
     // The intention is to also add graph functionality at some point. The graph will be simplifying the data before loading it in - it would be worth caching the simplified data when it comes to that as well.
-    QFile file(fileNameForDate(date, "stepCounter"));
+
+    QString path = fileNameForDate(date, "stepCounter");
+    QFile file(path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "failed to open file";
         return 0;
+    }
+    if (!m_fileWatcher->files().contains(path)) {
+        m_fileWatcher->addPath(path);
     }
     QTextStream inStream(&file);
     QString line = "0";
@@ -71,10 +81,14 @@ QVariant StepsDataLoader::getDataForDate(QDate date) {
 
 QList<QPointF> StepsDataLoader::getRawDataForDate(QDate date) {
     QList<QPointF> m_filedata;
-    QFile file(fileNameForDate(date, "stepCounter"));
+    QString path = fileNameForDate(date, "stepCounter");
+    QFile file(path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "failed to open file";
         return m_filedata;
+    }
+    if (!m_fileWatcher->files().contains(path)) {
+        m_fileWatcher->addPath(path);
     }
     QTextStream inStream(&file);
     QString line;

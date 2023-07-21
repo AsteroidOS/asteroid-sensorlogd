@@ -14,6 +14,7 @@
 #include <QObject>
 #include <QDBusInterface>
 #include <QPointF>
+#include <QFileSystemWatcher>
 
 #include <QtSensors/QStepCounterSensor>
 
@@ -33,8 +34,10 @@ public:
     QList<QPointF> getRawDataForDate(QDate date);
 signals:
     void todayTotalChanged();
+    void dataChanged();
 private:
     QDBusInterface *m_iface;
+    QFileSystemWatcher *m_fileWatcher;
     QStepCounterSensor *m_stepcounterSensor;
 };
 
