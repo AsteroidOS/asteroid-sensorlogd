@@ -8,6 +8,8 @@ add_library(
     hrDataLoader.h
     weightDataLoader.cpp
     weightDataLoader.h
+    barometerDataLoader.cpp
+    barometerDataLoader.h
     loggerSettings.cpp
     loggerSettings.h
     ../common.cpp

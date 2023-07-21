@@ -8,25 +8,31 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "sensorlogdqmlplugin.h"
-#include "loggerSettings.h"
-#include "stepsDataLoader.h"
-#include "hrDataLoader.h"
-#include "weightDataLoader.h"
-#include "barometerDataLoader.h"
-#include <QtQml>
+#ifndef BAROMETERDATALOADER_H
+#define BAROMETERDATALOADER_H
 
-LogdPlugin::LogdPlugin(QObject* parent)
-    : QQmlExtensionPlugin(parent)
-{
-}
+#include <QObject>
+#include <QDBusInterface>
+#include <QPointF>
+#include <QDate>
+#include <QFileSystemWatcher>
 
-void LogdPlugin::registerTypes(const char* uri)
+class BarometerDataLoader : public QObject
 {
-    Q_ASSERT(uri == QLatin1String("org.asteroid.sensorlogd"));
-    qmlRegisterType<StepsDataLoader>(uri, 1, 0, "StepsDataLoader");
-    qmlRegisterType<HrDataLoader>(uri, 1, 0, "HrDataLoader");
-    qmlRegisterType<WeightDataLoader>(uri, 1, 0, "WeightDataLoader");
-    qmlRegisterType<BarometerDataLoader>(uri, 1, 0, "BarometerDataLoader");
-    qmlRegisterType<LoggerSettings>(uri, 1, 0, "LoggerSettings");
-}
+    Q_OBJECT
+
+public:
+    explicit BarometerDataLoader();
+    Q_INVOKABLE QVariant getDataForDate(QDate date);
+    Q_INVOKABLE QVariant getTodayData();
+    Q_INVOKABLE void triggerDaemonRecording();
+    Q_INVOKABLE QVariant getDataFromTo(QDate date1, QDate date2);
+    QList<QPointF> getRawDataForDate(QDate date);
+signals:
+    void dataChanged();
+private:
+    QDBusInterface *m_iface;
+    QFileSystemWatcher *m_fileWatcher;
+};
+
+#endif // BAROMETERDATALOADER_H
