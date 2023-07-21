@@ -15,6 +15,7 @@
 #include <QSettings>
 #include <QDBusInterface>
 #include <QPointF>
+#include <QFileSystemWatcher>
 
 #include "hrDataLoader.h"
 #include "../common.h"
@@ -27,6 +28,10 @@ HrDataLoader::HrDataLoader() : QObject()
     } else {
         qDebug()<<"interface is valid";
     }
+    m_fileWatcher = new QFileSystemWatcher();
+    m_fileWatcher->addPath(sensorDirPath("heartrateMonitor"));
+    QObject::connect(m_fileWatcher,SIGNAL(directoryChanged(const QString)),this,SIGNAL(dataChanged()));
+    QObject::connect(m_fileWatcher,SIGNAL(fileChanged(const QString)),this,SIGNAL(dataChanged()));
 }
 
 QVariant HrDataLoader::getTodayData() {
@@ -39,10 +44,14 @@ QVariant HrDataLoader::getDataForDate(QDate date) {
 
 QList<QPointF> HrDataLoader::getRawDataForDate(QDate date) {
     QList<QPointF> m_filedata;
-    QFile file(fileNameForDate(date, "heartrateMonitor"));
+    QString path = fileNameForDate(date, "heartrateMonitor");
+    QFile file(path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "failed to open file";
         return m_filedata;
+    }
+    if (!m_fileWatcher->files().contains(path)) {
+        m_fileWatcher->addPath(path);
     }
     QTextStream inStream(&file);
     QString line;

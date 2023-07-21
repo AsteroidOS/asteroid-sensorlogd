@@ -15,6 +15,7 @@
 #include <QString>
 
 QString fileNameForDate(QDate date, QString prefix);
+QString sensorDirPath(QString prefix);
 void fileAddRecord(QString sensorPrefix, QString logdata, QDateTime recordTime = QDateTime::currentDateTime()); //adds a record to today's log file for the given sensor
 
 #endif //SENSORLOGD_COMMON_H

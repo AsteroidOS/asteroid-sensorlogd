@@ -19,6 +19,11 @@ QString fileNameForDate(QDate date, QString prefix) {
     return settings.value("loggerRootPath", QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.asteroid-sensorlogd/").toString() + prefix + "/" + date.toString("yyyy-MM-dd.log");
 }
 
+QString sensorDirPath(QString prefix) {
+    QSettings settings("asteroid", "sensorlogd"); // this should be moved out of here at some point TODO
+    return settings.value("loggerRootPath", QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.asteroid-sensorlogd/").toString() + prefix + "/";
+}
+
 void fileAddRecord(QString sensorPrefix, QString logdata, QDateTime recordTime) { //adds a record to today's log file for the given sensor
     qDebug() << fileNameForDate(recordTime.date(), sensorPrefix);
     QFile file(fileNameForDate(recordTime.date(), sensorPrefix));

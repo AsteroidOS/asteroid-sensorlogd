@@ -15,6 +15,7 @@
 #include <QDBusInterface>
 #include <QPointF>
 #include <QDate>
+#include <QFileSystemWatcher>
 
 class HrDataLoader : public QObject
 {
@@ -27,8 +28,11 @@ public:
     Q_INVOKABLE void triggerDaemonRecording();
     Q_INVOKABLE QVariant getDataFromTo(QDate date1, QDate date2);
     QList<QPointF> getRawDataForDate(QDate date);
+signals:
+    void dataChanged();
 private:
     QDBusInterface *m_iface;
+    QFileSystemWatcher *m_fileWatcher;
 };
 
 #endif // HRDATALOADER_H
