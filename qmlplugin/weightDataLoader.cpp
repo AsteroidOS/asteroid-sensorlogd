@@ -51,7 +51,6 @@ QList<QPointF> WeightDataLoader::getRawDataForDate(QDate date) {
         QPointF point;
         point.setX(line.split(":")[0].toInt());
         point.setY(line.split(":")[1].toInt());
-        qDebug() << point;
         m_filedata.append(point);
     }
     file.close();
@@ -68,10 +67,8 @@ QVariant WeightDataLoader::getDataFromTo(QDate date1, QDate date2) {
     for (QDate i = date1; i <= date2; i = i.addDays(1)) {
         qDebug() << "currently loading " << i;
         QList<QPointF> data = getRawDataForDate(i);
-        qDebug() << filedata.count();
         if (filedata.count() == 0) {
             filedata = data;
-            qDebug() << filedata.count();
         } else {
             filedata += data;
         }
