@@ -27,6 +27,8 @@ WeightDataLoader::WeightDataLoader() : QObject()
     } else {
         qDebug()<<"interface is valid";
     }
+
+    setupFilePath("weight"); //since weight doesn't have a sensor plugin, we perform this check here
 }
 
 QVariant WeightDataLoader::getTodayData() {
