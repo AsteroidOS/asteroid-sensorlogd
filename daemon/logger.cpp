@@ -14,7 +14,6 @@
 #include <QDBusConnection>
 #include <QDateTime>
 #include <QFile>
-#include <QDir>
 #include <QTextStream>
 #include <QTimer>
 #include <QDebug>
@@ -135,9 +134,5 @@ QStringList fileGetPrevRecord(QString sensorPrefix, QDateTime recordTime) {
     return line.split(":");
 }
 
-void setupFilePath(QString sensorPrefix) {
-    QSettings settings("asteroid","sensorlogd"); //this should be moved out of here at some point TODO
-    QDir::root().mkpath(settings.value("loggerRootPath",QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.asteroid-sensorlogd/").toString() + sensorPrefix);
-}
 
 

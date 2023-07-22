@@ -12,6 +12,7 @@
 #include <QStandardPaths>
 #include <QFile>
 #include <QDebug>
+#include <QDir>
 #include "common.h"
 
 QString fileNameForDate(QDate date, QString prefix) {
@@ -35,4 +36,9 @@ void fileAddRecord(QString sensorPrefix, QString logdata, QDateTime recordTime) 
     QTextStream out(&file);
     out << QString::number(recordTime.currentSecsSinceEpoch()) + ":" + logdata + "\n";
     file.close();
+}
+
+void setupFilePath(QString sensorPrefix) {
+    QSettings settings("asteroid","sensorlogd"); //this should be moved out of here at some point TODO
+    QDir::root().mkpath(settings.value("loggerRootPath",QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.asteroid-sensorlogd/").toString() + sensorPrefix);
 }
