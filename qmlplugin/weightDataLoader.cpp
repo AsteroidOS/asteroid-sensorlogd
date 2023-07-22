@@ -50,7 +50,7 @@ QList<QPointF> WeightDataLoader::getRawDataForDate(QDate date) {
         line = inStream.readLine();
         QPointF point;
         point.setX(line.split(":")[0].toInt());
-        point.setY(line.split(":")[1].toInt());
+        point.setY(line.split(":")[1].toFloat());
         m_filedata.append(point);
     }
     file.close();
