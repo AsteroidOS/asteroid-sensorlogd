@@ -18,13 +18,18 @@ add_library(
 
 target_link_libraries(
     sensorlogdqmlplugin
-    Qt5::Qml
-    Qt5::Quick
-    Qt5::DBus
-    Qt5::Sensors
+    PUBLIC
+	    Qt::Qml
+        Qt::Quick
+        Qt::DBus
+        Qt::Sensors
 )
 
-install(TARGETS sensorlogdqmlplugin
-	DESTINATION ${INSTALL_QML_IMPORT_DIR}/org/asteroid/sensorlogd)
-install(FILES qmldir
-	DESTINATION ${INSTALL_QML_IMPORT_DIR}/org/asteroid/sensorlogd)
+install(
+    TARGETS sensorlogdqmlplugin
+	DESTINATION ${INSTALL_QML_IMPORT_DIR}/org/asteroid/sensorlogd
+)
+install(
+    FILES qmldir
+	DESTINATION ${INSTALL_QML_IMPORT_DIR}/org/asteroid/sensorlogd
+)
