@@ -16,8 +16,12 @@ add_library(
     ../common.h
 )
 
-target_link_libraries(sensorlogdqmlplugin
-	Qt5::Qml Qt5::Quick Qt5::DBus Qt5::Sensors
+target_link_libraries(
+    sensorlogdqmlplugin
+    Qt5::Qml
+    Qt5::Quick
+    Qt5::DBus
+    Qt5::Sensors
 )
 
 install(TARGETS sensorlogdqmlplugin
