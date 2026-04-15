@@ -4,21 +4,13 @@ project(sensorlogd
     DESCRIPTION "A sensor logger daemon for AsteroidOS oriented towards health tracking"
 )
 
-find_package(ECM REQUIRED NO_MODULE)
-find_package(AsteroidApp REQUIRED)
-
-set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ASTEROID_MODULE_PATH})
+find_package(PkgConfig)
 
 include(FeatureSummary)
 include(GNUInstallDirs)
-include(ECMFindQmlModule)
-include(ECMGeneratePkgConfigFile)
-include(AsteroidCMakeSettings)
-
-include(AsteroidCMakeSettings)
 
 find_package(Qt5 COMPONENTS Core DBus Qml Sensors REQUIRED)
-find_package(Mlite5 MODULE REQUIRED)
+pkg_check_modules(mlite5 REQUIRED Mlite5)
 
 add_subdirectory(daemon)
 add_subdirectory(qmlplugin)

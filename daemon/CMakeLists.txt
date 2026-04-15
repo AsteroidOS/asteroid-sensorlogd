@@ -13,7 +13,14 @@ add_executable(sensorlogd
 )
 set_target_properties(sensorlogd PROPERTIES AUTOMOC ON)
 #add_compile_definitions(Q_DECLARE_PRIVATE_SUPPORTS_UNIQUE_PTR=${Q_DECLARE_PRIVATE_SUPPORTS_UNIQUE_PTR})
-target_link_libraries(sensorlogd PRIVATE Qt5::Core Qt5::DBus Qt5::Qml Qt5::Sensors Mlite5::Mlite5)
+target_link_libraries(sensorlogd PRIVATE
+    Qt5::Core
+    Qt5::DBus
+    Qt5::Qml
+    Qt5::Sensors
+    ${mlite5_LIBRARIES}
+)
+target_include_directories(sensorlogd PRIVATE ${mlite5_INCLUDE_DIRS})
 install(TARGETS sensorlogd DESTINATION bin)
 install(FILES systemd/asteroid-sensorlogd.service
 		DESTINATION /usr/lib/systemd/user)
