@@ -1,4 +1,5 @@
-add_executable(sensorlogd
+add_executable(
+    sensorlogd
     sensorlogd.cpp
     logger.cpp
     logger.h
@@ -11,16 +12,20 @@ add_executable(sensorlogd
     ../common.cpp
     ../common.h
 )
+
 set_target_properties(sensorlogd PROPERTIES AUTOMOC ON)
-#add_compile_definitions(Q_DECLARE_PRIVATE_SUPPORTS_UNIQUE_PTR=${Q_DECLARE_PRIVATE_SUPPORTS_UNIQUE_PTR})
-target_link_libraries(sensorlogd PRIVATE
-    Qt5::Core
-    Qt5::DBus
-    Qt5::Qml
-    Qt5::Sensors
-    ${mlite5_LIBRARIES}
+target_link_libraries(
+    sensorlogd
+    PRIVATE
+        Qt::Core
+        Qt::DBus
+        Qt::Qml
+        Qt::Sensors
+        ${mlite6_LIBRARIES}
 )
-target_include_directories(sensorlogd PRIVATE ${mlite5_INCLUDE_DIRS})
+target_include_directories(sensorlogd PRIVATE ${mlite6_INCLUDE_DIRS})
 install(TARGETS sensorlogd DESTINATION bin)
-install(FILES systemd/asteroid-sensorlogd.service
-		DESTINATION /usr/lib/systemd/user)
+install(
+    FILES systemd/asteroid-sensorlogd.service
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/systemd/user
+)
