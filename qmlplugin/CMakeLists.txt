@@ -20,7 +20,6 @@ target_link_libraries(
     sensorlogdqmlplugin
     PUBLIC
 	    Qt::Qml
-        Qt::Quick
         Qt::DBus
         Qt::Sensors
 )
