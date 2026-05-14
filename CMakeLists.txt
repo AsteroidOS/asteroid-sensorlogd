@@ -11,7 +11,7 @@ include(FeatureSummary)
 include(GNUInstallDirs)
 
 find_package(Qt6 COMPONENTS Core DBus Qml Sensors REQUIRED)
-pkg_check_modules(mlite6 REQUIRED Mlite6)
+pkg_check_modules(mlite6 REQUIRED mlite6)
 
 add_subdirectory(daemon)
 add_subdirectory(qmlplugin)
